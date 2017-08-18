@@ -8,6 +8,7 @@
 
 namespace App\Models;
 
+use DB;
 use Webpatser\Uuid\Uuid;
 use Illuminate\Database\Eloquent\Model;
 
@@ -66,6 +67,50 @@ class Reclamos extends Model
     public function setUuidAttribute($uuid)
     {
         $this->attributes['uuid'] = Uuid::generate(4);
+    }
+
+    public function scopeByCopropietario($query, $copropietario)
+    {
+        $resutl = null;
+
+        $query = "select re.uuid id, re.fecha, con.nombre, tr.reclamo tipo, er.valor estado, re.infoAdicional descripcion from ".
+            "reclamos re, consorcios con, copropietarios co, tipos_reclamo tr, estadoreclamos er where ".
+            "re.id_copropietario = co.id and co.id = " . $copropietario . " and re.tipo_reclamo = tr.id and ".
+            "re.id_consorcio = con.id and re.estado = er.id order by re.fecha desc";
+
+        try
+        {
+
+            $result = DB::select(DB::raw($query));
+
+        }catch (\Exception $e)
+        {
+            $result = $e->getMessage();
+        }
+
+        return $result;
+    }
+
+    public function scopeById($query, $id)
+    {
+        $resutl = null;
+
+        $query = "select re.uuid id, re.fecha, con.nombre, tr.reclamo tipo, er.valor estado, re.infoAdicional descripcion from ".
+            "reclamos re, consorcios con, copropietarios co, tipos_reclamo tr, estadoreclamos er where ".
+            "re.id_copropietario = co.id and re.id = " . $id. " and re.tipo_reclamo = tr.id and ".
+            "re.id_consorcio = con.id and re.estado = er.id";
+
+        try
+        {
+
+            $result = DB::select(DB::raw($query));
+
+        }catch (\Exception $e)
+        {
+            $result = $e->getMessage();
+        }
+
+        return $result;
     }
 
 }

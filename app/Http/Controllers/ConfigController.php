@@ -8,6 +8,8 @@
 
 namespace App\Http\Controllers;
 
+
+use App\Utils\General;
 use App\Models\Bancos;
 use App\Models\Consorcios;
 use App\Models\Estadopagos;
@@ -31,97 +33,88 @@ class ConfigController extends Controller
     public function tipoReclamos()
     {
 
+        $general = new General();
+
         $tipos = TipoReclamoTransformer::transformCollection( Tiposreclamo::all( [ 'uuid', 'reclamo' ] ) );
 
         if ( !$tipos )
         {
-            throw new HttpException(400, "Invalid data");
+            $general->responseErrorAPI( "Invalid data" );;
         }
 
-        return response()->json(
-            $tipos,
-            200
-        );
+        return $general->responseSuccessAPI( $tipos );
     }
 
     public function tipoMovimieto()
     {
 
+        $general = new General();
+
         $tipos = TipoMovimientoTransformer::transformCollection( TiposMovimiento::all( [ 'uuid', 'movimiento' ] ) );
 
         if ( !$tipos )
         {
-            throw new HttpException(400, "Invalid data");
+            $general->responseErrorAPI( "Invalid data" );
         }
 
-        return response()->json(
-            $tipos,
-            200
-        );
+        return $general->responseSuccessAPI( $tipos );
     }
 
     public function estadoPagos()
     {
 
+        $general = new General();
+        
         $estados = EstadoPagoTransformer::transformCollection( Estadopagos::all( [ 'uuid', 'valor' ] ) );
 
         if ( !$estados )
         {
-            throw new HttpException(400, "Invalid data");
+            $general->responseErrorAPI( "Invalid data" );
         }
 
-        return response()->json(
-            $estados,
-            200
-        );
+        return $general->responseSuccessAPI( $estados );
     }
 
     public function estadoReclamos()
     {
+        $general = new General();
 
         $estados = EstadoReclamosTransformer::transformCollection( Estadoreclamos::all( [ 'uuid', 'valor' ] ) );
 
         if ( !$estados )
         {
-            throw new HttpException(400, "Invalid data");
+            $general->responseErrorAPI( "Invalid data" );
         }
 
-        return response()->json(
-            $estados,
-            200
-        );
+        return $general->responseSuccessAPI( $estados );
     }
 
     public function bancos()
     {
+        $general = new General();
 
         $bancos = BancosTransformer::transformCollection( Bancos::all( [ 'uuid', 'banco' ] ) );
 
         if ( !$bancos )
         {
-            throw new HttpException(400, "Invalid data");
+            $general->responseErrorAPI( "Invalid data" );
         }
 
-        return response()->json(
-            $bancos,
-            200
-        );
+        return $general->responseSuccessAPI( $bancos );
     }
 
     public function consorcios()
     {
+        $general = new General();
 
-        $bancos = ConsorciosTransformer::transformCollection( Consorcios::all( [ 'uuid', 'nombre' ] ) );
+        $consorcios = ConsorciosTransformer::transformCollection( Consorcios::all( [ 'uuid', 'nombre' ] ) );
 
-        if ( !$bancos )
+        if ( !$consorcios )
         {
-            throw new HttpException(400, "Invalid data");
+            $general->responseErrorAPI( "Invalid data" );
         }
 
-        return response()->json(
-            $bancos,
-            200
-        );
+        return $general->responseSuccessAPI( $consorcios );
     }
 
 }

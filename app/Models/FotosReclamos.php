@@ -2,30 +2,24 @@
 /**
  * Created by PhpStorm.
  * User: andres
- * Date: 02/07/17
- * Time: 07:15 PM
+ * Date: 18/08/17
+ * Time: 01:31 AM
  */
 
 namespace App\Models;
 
-use DB;
-use Webpatser\Uuid\Uuid;
 use Illuminate\Database\Eloquent\Model;
 
-
-class Consorcios extends Model
+class FotosReclamos extends Model
 {
-    
+    protected $table = 'fotosreclamos';
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = [
-        'uuid', 'nombre'
-    ];
-
+    protected $fillable = [ 'id_reclamo', 'principal', 'secundaria' ];
 
     /**
      * The attributes that should be mutated to dates.
@@ -33,13 +27,5 @@ class Consorcios extends Model
      * @var array
      */
     protected $dates = ['created_at', 'updated_at'];
-
-    /**
-     * @param $uuid
-     */
-    public function setUuidAttribute($uuid)
-    {
-        $this->attributes['uuid'] = Uuid::generate(4);
-    }
 
 }

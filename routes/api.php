@@ -27,3 +27,13 @@ Route::get('estadopagos', 'ConfigController@estadoPagos');
 Route::get('estadoreclamos', 'ConfigController@estadoReclamos');
 Route::get('bancos', 'ConfigController@bancos');
 Route::get('consorcios', 'ConfigController@consorcios');
+
+Route::post('login', 'CopropietariosController@login');
+
+Route::post('copropietario', 'CopropietariosController@signUp');
+Route::put('copropietario/{uuid}/update', 'CopropietariosController@updateInfo');
+Route::get('copropietario/{uuid}', 'CopropietariosController@detailInfo');
+Route::get('copropietarios', 'CopropietariosController@todos');
+
+Route::post('reclamo', 'ReclamosController@save');
+Route::post('reclamo/fotos', 'ReclamosController@savePhotos');
