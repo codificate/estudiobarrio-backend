@@ -73,29 +73,48 @@ class Reclamos extends Model
     {
         $resutl = null;
 
-        $query = "select re.uuid id, re.fecha, con.nombre, tr.reclamo tipo, er.valor estado, re.infoAdicional descripcion from ".
-            "reclamos re, consorcios con, copropietarios co, tipos_reclamo tr, estadoreclamos er where ".
-            "re.id_copropietario = co.id and co.id = " . $copropietario . " and re.tipo_reclamo = tr.id and ".
+        $query = 
+            "select re.id, re.uuid, re.fecha, con.nombre, tr.reclamo tipo, ".
+            "er.valor estado, re.infoAdicional descripcion ".
+            "from reclamos re, consorcios con, copropietarios co, tipos_reclamo tr, estadoreclamos er ".
+            "where re.id_copropietario = co.id and co.id = " . $copropietario . " and re.tipo_reclamo = tr.id and ".
             "re.id_consorcio = con.id and re.estado = er.id order by re.fecha desc";
+
+        $reclamos = [];
 
         try
         {
-
             $result = DB::select(DB::raw($query));
+
+            if ( is_array( $result ) )
+            {
+                foreach ( $result as $reclamo )
+                {
+                    $fotosreclamo = FotosReclamos::all()->where('id_reclamo', $reclamo->id)->first();
+                    if ( $fotosreclamo instanceof FotosReclamos )
+                    {
+                        $reclamo->fotos = array( $fotosreclamo->principal, $fotosreclamo->secundaria );
+                    }
+
+                    unset( $reclamo->id );
+                    array_push( $reclamos, $reclamo );
+                }
+            }
 
         }catch (\Exception $e)
         {
-            $result = $e->getMessage();
+            $reclamos = $e->getMessage();
         }
 
-        return $result;
+        return $reclamos;
     }
 
     public function scopeById($query, $id)
     {
         $resutl = null;
 
-        $query = "select re.uuid id, re.fecha, con.nombre, tr.reclamo tipo, er.valor estado, re.infoAdicional descripcion from ".
+        $query = "select re.uuid id, re.fecha, con.nombre, tr.reclamo tipo, er.valor estado, ".
+            "re.infoAdicional descripcion from ".
             "reclamos re, consorcios con, copropietarios co, tipos_reclamo tr, estadoreclamos er where ".
             "re.id_copropietario = co.id and re.id = " . $id. " and re.tipo_reclamo = tr.id and ".
             "re.id_consorcio = con.id and re.estado = er.id";

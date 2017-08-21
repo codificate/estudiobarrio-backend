@@ -8,6 +8,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\FotosReclamos;
 use App\Utils\General;
 use App\Models\Consorcios;
 use App\Models\Copropietarios;
@@ -88,6 +89,8 @@ class CopropietariosController extends Controller
         {
             try
             {
+                $fotosreclamos= null;
+
                 $reclamosbycopropietario = Reclamos::ByCopropietario( $copropietario->id );
 
                 $consorcio = Consorcios::all()->where( 'id', '=', $copropietario->id_consorcio )->first();

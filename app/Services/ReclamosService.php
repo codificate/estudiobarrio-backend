@@ -70,11 +70,15 @@ class ReclamosService
             {
                 $path = public_path()  . '/' . $data['reclamo'];
 
-                array_push( $fotossubidas, $this->storePhoto( $data['primerafoto'], $path ) );
+                $fotossubidas['primerafoto'] = $this->storePhoto( $data['primerafoto'], $path );
 
-                sleep(3);
+                //array_push( $fotossubidas, $this->storePhoto( $data['primerafoto'], $path ) );
 
-                array_push( $fotossubidas, $this->storePhoto( $data[ 'segundafoto' ], $path ) );
+                sleep(2);
+
+                $fotossubidas[ 'segundafoto' ] = $this->storePhoto( $data[ 'segundafoto' ], $path );
+
+                //array_push( $fotossubidas, $this->storePhoto( $data[ 'segundafoto' ], $path ) );
             }
             else
             {
