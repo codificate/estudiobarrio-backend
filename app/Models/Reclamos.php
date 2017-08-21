@@ -96,7 +96,9 @@ class Reclamos extends Model
                         $reclamo->fotos = array( $fotosreclamo->principal, $fotosreclamo->secundaria );
                     }
 
-                    unset( $reclamo->id );
+                    $reclamo->id = $reclamo->uuid;
+
+                    unset( $reclamo->uuid );
                     array_push( $reclamos, $reclamo );
                 }
             }

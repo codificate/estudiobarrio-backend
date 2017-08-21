@@ -9,6 +9,7 @@
 namespace App\Services;
 
 use App\Models\FotosReclamos;
+use App\Transformers\ReclamoTransformer;
 use Symfony\Component\HttpFoundation\File\File;
 use App\Models\Estadoreclamos;
 use App\Models\Reclamos;
@@ -48,7 +49,10 @@ class ReclamosService
 
                 if ( $reclamo->save() )
                 {
-                    return Reclamos::ById( $reclamo->id );
+                    $reclamoguardado = Reclamos::ById( $reclamo->id );
+                    
+                    return ReclamoTransformer::nuevoReclamo( $reclamoguardado[0] );
+                    
                 }
             }
         } catch (\Exception $e)
@@ -89,8 +93,8 @@ class ReclamosService
             {
                 $fotos = new FotosReclamos();
                 $fotos->id_reclamo = $reclamo->id;
-                $fotos->principal = $fotossubidas[0];
-                $fotos->secundaria = $fotossubidas[1];
+                $fotos->principal = $fotossubidas['primerafoto'];
+                $fotos->secundaria = $fotossubidas['segundafoto'];
 
                 try
                 {
