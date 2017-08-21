@@ -89,7 +89,6 @@ class CopropietariosController extends Controller
         {
             try
             {
-                $fotosreclamos= null;
 
                 $reclamosbycopropietario = Reclamos::ByCopropietario( $copropietario->id );
 
@@ -156,7 +155,9 @@ class CopropietariosController extends Controller
 
                 if ( array_key_exists( 'consorcio', $data ) )
                 {
-                    $copropietario->id_consorcio = $data['consorcio'];
+                    $consorcio = Consorcios::all()->where( 'uuid', '=', $data['consorcio'] )->first();
+
+                    $copropietario->id_consorcio = $consorcio->id;
                 }
 
                 if ( array_key_exists( 'piso', $data ) )

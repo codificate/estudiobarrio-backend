@@ -46,6 +46,7 @@ class UserTransformer
         $response->nombre = $copropietario->nombre;
         $response->email = $copropietario->email;
         $response->piso = $copropietario->piso;
+        $response->departamento = $copropietario->departamento;
         $response->telefono = $copropietario->telefono;
 
         if ( $consorcio != null )

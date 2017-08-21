@@ -74,11 +74,11 @@ class Reclamos extends Model
         $resutl = null;
 
         $query = 
-            "select re.id, re.uuid, re.fecha, con.nombre, tr.reclamo tipo, ".
+            "select re.id, re.uuid, re.fecha, tr.reclamo tipo, ".
             "er.valor estado, re.infoAdicional descripcion ".
-            "from reclamos re, consorcios con, copropietarios co, tipos_reclamo tr, estadoreclamos er ".
-            "where re.id_copropietario = co.id and co.id = " . $copropietario . " and re.tipo_reclamo = tr.id and ".
-            "re.id_consorcio = con.id and re.estado = er.id order by re.fecha desc";
+            "from reclamos re, copropietarios co, tipos_reclamo tr, estadoreclamos er ".
+            "where re.id_copropietario = co.id and co.id = " . $copropietario . " and re.tipo_reclamo = tr.id ".
+            "and re.estado = er.id order by re.fecha desc";
 
         $reclamos = [];
 
