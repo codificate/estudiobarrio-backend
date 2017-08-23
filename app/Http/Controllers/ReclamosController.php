@@ -63,4 +63,9 @@ class ReclamosController extends Controller
             }
         }
     }
+    
+    public function byConsorcio( Request $request, $uuid )
+    {
+        
+    }
 }
