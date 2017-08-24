@@ -38,7 +38,7 @@ class UserTransformer
         return $response;
     }
 
-    public static function detallecopropietario( $copropietario, $consorcio, $reclamos )
+    public static function detallecopropietario( $copropietario, $consorcio, $reclamos, $pagos )
     {
         $response = new \stdClass;
 
@@ -57,6 +57,9 @@ class UserTransformer
 
         if ( is_array( $reclamos ) )
             $response->reclamos = $reclamos;
+
+        if ( is_array( $pagos ) )
+            $response->pagos = $pagos;
 
         return $response;
     }

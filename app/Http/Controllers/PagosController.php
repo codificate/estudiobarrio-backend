@@ -18,7 +18,7 @@ use Illuminate\Http\Response;
 class PagosController
 {
 
-    public function savePagos( Request $request )
+    public function save( Request $request )
     {
         $data = $request->all();
         $general = new General();

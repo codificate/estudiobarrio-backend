@@ -9,6 +9,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\FotosReclamos;
+use App\Models\Pagos;
 use App\Utils\General;
 use App\Models\Consorcios;
 use App\Models\Copropietarios;
@@ -57,11 +58,13 @@ class CopropietariosController extends Controller
 
                 try
                 {
-                    $reclamosbycopropietario = Reclamos::ByCopropietario( $copropietario->id );
+                    $reclamos = Reclamos::ByCopropietario( $copropietario->id );
+
+                    $pagos = Pagos::ByCopropietario( $copropietario->id );
 
                     $consorcio = Consorcios::all()->where( 'id', '=', $copropietario->id_consorcio )->first();
 
-                    return $general->responseSuccessAPI( UserTransformer::detallecopropietario( $copropietario, $consorcio, $reclamosbycopropietario ) );
+                    return $general->responseSuccessAPI( UserTransformer::detallecopropietario( $copropietario, $consorcio, $reclamos, $pagos ) );
 
                 } catch (\Exception $e)
                 {
@@ -90,11 +93,13 @@ class CopropietariosController extends Controller
             try
             {
 
-                $reclamosbycopropietario = Reclamos::ByCopropietario( $copropietario->id );
+                $reclamos = Reclamos::ByCopropietario( $copropietario->id );
+
+                $pagos = Pagos::ByCopropietario( $copropietario->id );
 
                 $consorcio = Consorcios::all()->where( 'id', '=', $copropietario->id_consorcio )->first();
 
-                return $general->responseSuccessAPI( UserTransformer::detallecopropietario( $copropietario, $consorcio, $reclamosbycopropietario ) );
+                return $general->responseSuccessAPI( UserTransformer::detallecopropietario( $copropietario, $consorcio, $reclamos, $pagos ) );
                 
             } catch (\Exception $e)
             {

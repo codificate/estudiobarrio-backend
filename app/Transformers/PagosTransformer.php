@@ -19,7 +19,7 @@ class PagosTransformer
         $response->fecha = $pago->fecha;
         $response->banco = $banco->banco;
         $response->tipo = $tipo->movimiento;
-        $response->monto = $pago->monto;
+        $response->monto = (double) $pago->monto;
         $response->comentario = $pago->comentario;
 
         return $response;

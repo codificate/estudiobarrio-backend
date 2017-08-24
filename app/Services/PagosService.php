@@ -44,6 +44,8 @@ class PagosService
             {
                 if ( $pago->save() )
                 {
+                    $pago = Pagos::all()->where( 'id', $pago->id )->first();
+
                     $pagorealizado = PagosTransformer::nuevoPago( $pago, $this->banco, $this->tipo );
                 }
             }
@@ -51,6 +53,10 @@ class PagosService
             {
                 $pagorealizado['error'] = $e->getMessage();
             }
+        }
+        else
+        {
+            return $camposvalidos;
         }
 
         return $pagorealizado;
@@ -60,35 +66,35 @@ class PagosService
     {
         $validFields = true;
 
-        if ( Victorinox::isValidUuid( $data['copropietario'] ) )
-        {
+        //if ( Victorinox::isValidUuid( $data['copropietario'] ) )
+        //{
             $this->copropietario =  Copropietarios::all()->where( 'uuid', $data['copropietario'] )->first();
 
             if ( !$this->copropietario instanceof Copropietarios )
                 return array( 'error' => 'Al parecer no existe el copropietario' );
-        }
-        else
-            return array( 'error' => 'El ID del copropietario no es valido' );
+        //}
+        //else
+        //    return array( 'error' => 'El ID del copropietario no es valido' );
 
-        if ( Victorinox::isValidUuid( $data['banco'] ) )
-        {
+        //if ( Victorinox::isValidUuid( $data['banco'] ) )
+        //{
             $this->banco = Bancos::all()->where('uuid', $data['banco'])->first();
 
             if ( !$this->banco instanceof Bancos)
                 return array( 'error' => 'Al parecer no existe el banco seleccionado' );
-        }
-        else
-            return array( 'error' => 'El ID del banco no es valido' );
+        //}
+        //else
+        //    return array( 'error' => 'El ID del banco no es valido' );
 
-        if ( Victorinox::isValidUuid( $data['tipo'] ) )
-        {
+        //if ( Victorinox::isValidUuid( $data['tipo'] ) )
+        //{
             $this->tipo = TiposMovimiento::all()->where('uuid', $data['tipo'])->first();
 
             if ( !$this->tipo instanceof TiposMovimiento)
                 return array( 'error' => 'Al parecer no existe el tipo de movimiento seleccionado' );
-        }
-        else
-            return array( 'error' => 'El ID del tipo de movimiento no es valido' );
+        //}
+        //else
+        //    return array( 'error' => 'El ID del tipo de movimiento no es valido' );
 
 
         return $validFields;

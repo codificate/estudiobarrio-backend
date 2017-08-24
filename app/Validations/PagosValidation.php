@@ -8,6 +8,7 @@
 
 namespace App\Validations;
 
+use Validator;
 
 class PagosValidation
 {

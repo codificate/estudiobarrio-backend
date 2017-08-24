@@ -49,9 +49,9 @@ class ReclamosService
 
                 if ( $reclamo->save() )
                 {
-                    $reclamoguardado = Reclamos::ById( $reclamo->id );
+                    $reclamoguardado = Reclamos::all()->where('id', $reclamo->id)->first();
                     
-                    return ReclamoTransformer::nuevoReclamo( $reclamoguardado[0] );
+                    return ReclamoTransformer::nuevoReclamo( $reclamoguardado );
                     
                 }
             }

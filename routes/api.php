@@ -38,3 +38,5 @@ Route::get('copropietarios', 'CopropietariosController@todos');
 Route::post('reclamo', 'ReclamosController@save');
 Route::post('reclamo/fotos', 'ReclamosController@savePhotos');
 Route::get('reclamo/byconsorcio/{uuid}', 'ReclamosController@byConsorcio');
+
+Route::post('pago', 'PagosController@save');
