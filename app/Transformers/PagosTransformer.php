@@ -17,9 +17,11 @@ class PagosTransformer
 
         $response->id = $pago->uuid;
         $response->fecha = $pago->fecha;
+        $response->id_banco = $banco->uuid;
         $response->banco = $banco->banco;
-        $response->tipo = $tipo->movimiento;
-        $response->monto = (double) $pago->monto;
+        $response->id_movimiento = $tipo->uuid;
+        $response->movimiento = $tipo->movimiento;
+        $response->monto = $pago->monto;
         $response->comentario = $pago->comentario;
 
         return $response;
