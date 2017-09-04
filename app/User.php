@@ -4,12 +4,13 @@ namespace App;
 
 use Hash;
 use Webpatser\Uuid\Uuid;
+use Laravel\Passport\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
-    use Notifiable;
+    use HasApiTokens, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -17,7 +18,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'uuid', 'nombre', 'password', 'email', 'rol'
+        'uuid', 'name', 'password', 'email', 'id_rol'
     ];
 
     /**

@@ -10,11 +10,13 @@ namespace App\Http\Controllers;
 
 use App\Models\FotosReclamos;
 use App\Models\Pagos;
+use App\Services\UserService;
 use App\Utils\General;
 use App\Models\Consorcios;
 use App\Models\Copropietarios;
 use App\Models\Reclamos;
 use App\Transformers\UserTransformer;
+use App\Validations\UsuariosValidations;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -111,38 +113,17 @@ class CopropietariosController extends Controller
     public function signUp (Request $request)
     {
         $data = $request->all();
+        $general = new General();
+        $service = new UserService();
+        $validator = UsuariosValidations::nuevoUsuario( $data );
 
-        try {
-
-            $consorcio =  Consorcios::all()->where( 'uuid', $data['consorcio'] )->first();
-
-            $co = new Copropietarios();
-            $co->uuid = '';
-
-            if ( $consorcio instanceof Consorcios and $consorcio != null)
-                $co->id_consorcio = $consorcio->id;
-
-            $co->UF = '';
-            $co->piso = $data['piso'];
-            $co->departamento = $data['departamento'];
-            $co->nombre = $data['nombre'];
-            $co->password = bcrypt($data['clave']);
-            $co->email = $data['email'];
-            $co->telefono = $data['telefono'];
-            $co->activation_key = '';
-            $co->id_estado = 0;
-
-            if ($co->save()) {
-                $inquilino = Copropietarios::all()->where('id', $co->id)->first();
-                
-                return UserTransformer::nuevocopropietario($inquilino);
-            }
-
-        } catch ( \Exception $e) {
-
-            return [ 'error' => $e->getMessage() ];
-
+        if( $validator->fails() )
+        {
+            dd( $validator->messages()->first() );
+            return $general->responseErrorAPI( $validator );
         }
+        else
+            return $general->responseSuccessAPI( $service->register( $data ) );
 
     }
 
