@@ -119,8 +119,7 @@ class CopropietariosController extends Controller
 
         if( $validator->fails() )
         {
-            dd( $validator->messages()->first() );
-            return $general->responseErrorAPI( $validator );
+            return $general->responseErrorAPI( $validator->messages()->first() );
         }
         else
             return $general->responseSuccessAPI( $service->register( $data ) );

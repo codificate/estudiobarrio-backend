@@ -68,11 +68,11 @@ class UserTransformer
     {
         $response = new \stdClass;
 
-        $response->usuario = $usuario;
-
         $response->id = $copropietario->uuid;
-        $response->nombre = $copropietario->nombre;
-        $response->email = $copropietario->email;
+        $response->id_usuario = $usuario->uuid;
+        $response->rol = $usuario->id_rol;
+        $response->nombre = $usuario->name;
+        $response->email = $usuario->email;
         $response->piso = $copropietario->piso;
         $response->departamento = $copropietario->departamento;
         $response->telefono = $copropietario->telefono;
@@ -88,6 +88,8 @@ class UserTransformer
 
         if ( is_array( $pagos ) && $pagos != null )
             $response->pagos = $pagos;
+
+        $response->token = $usuario->access_token;
 
         return $response;
     }

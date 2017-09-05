@@ -11,6 +11,7 @@ namespace App\Services;
 
 use App\Models\Consorcios;
 use App\Models\Copropietarios;
+use App\Models\Rol;
 use App\Transformers\UserTransformer;
 use App\User;
 
@@ -58,6 +59,10 @@ class UserService
                 if ($copropietario->save())
                 {
                     $inquilino = Copropietarios::all()->where('id', $copropietario->id)->first();
+                    $rol = Rol::all()->where('id', $usuario->id_rol)->first();
+
+                    if ( $rol instanceof Rol )
+                        $usuario->id_rol = $rol->nombre;
 
                     return UserTransformer::nuevocopropietario($usuario, $inquilino, $consorcio, null, null);
                 }
