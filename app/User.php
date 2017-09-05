@@ -39,17 +39,6 @@ class User extends Authenticatable
     protected $dates = ['created_at', 'updated_at'];
 
     /**
-     * Automatically creates hash for the user password.
-     *
-     * @param  string  $value
-     * @return void
-     */
-    public function setPasswordAttribute($value)
-    {
-        $this->attributes['password'] = Hash::make($value);
-    }
-
-    /**
      * @param $uuid
      */
     public function setUuidAttribute($uuid)

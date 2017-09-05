@@ -19,6 +19,7 @@ use App\Transformers\UserTransformer;
 use App\Validations\UsuariosValidations;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 
 
 class CopropietariosController extends Controller
@@ -45,68 +46,51 @@ class CopropietariosController extends Controller
 
     }
 
-    public function login(Request $request)
+    public function login()
     {
-        $data = $request->all();
-
         $general = new General();
+        $service = new UserService();
 
-        if ( array_key_exists( 'email', $data ) )
+        if ( Auth::attempt( [ 'email' => request('email'), 'password' => request('password') ] ) )
         {
-            $copropietario =  Copropietarios::all()->where( 'email', $data['email'] )->first();
+            $usuario = Auth::user();
+
+            $response = $service->detailUser( $usuario );
+
+            if ( !is_array( $response ) )
+                return $general->responseSuccessAPI( $response );
+            else
+                return $general->responseErrorAPI( $response, 500 );
+        }
+        else
+        {
+            $copropietario =  Copropietarios::all()->where( 'email', request('email') )->first();
 
             if ( $copropietario instanceof  Copropietarios && $copropietario != null)
             {
-
-                try
-                {
-                    $reclamos = Reclamos::ByCopropietario( $copropietario->id );
-
-                    $pagos = Pagos::ByCopropietario( $copropietario->id );
-
-                    $consorcio = Consorcios::all()->where( 'id', '=', $copropietario->id_consorcio )->first();
-
-                    return $general->responseSuccessAPI( UserTransformer::detallecopropietario( $copropietario, $consorcio, $reclamos, $pagos ) );
-
-                } catch (\Exception $e)
-                {
-                    return $general->responseErrorAPI( $e->getMessage() );
-                }
-            } else
-            {
-                return $general->responseErrorAPI( "Al parecer aun no te haz dado de alta!" );
+                return $general->responseErrorAPI( "Por favor actualiza tu clave para iniciar sesion", 502 );
             }
-
-        } else
-        {
-            return $general->responseErrorAPI( "El campo email no puede estar vacio" );
+            else
+            {
+                return $general->responseErrorAPI( "Al parecer aun no te haz dado de alta!", 501 );
+            }
         }
-
     }
 
     public function detailInfo(Request $request, $uuid)
     {
         $general = new General();
+        $service = new UserService();
 
-        $copropietario =  Copropietarios::all()->where( 'uuid', $uuid )->first();
-        
-        if ( $copropietario instanceof  Copropietarios && $copropietario != null)
+        $response = $service->detailUserByUuid( $uuid );
+
+        if ( !is_array( $response ) )
         {
-            try
-            {
-
-                $reclamos = Reclamos::ByCopropietario( $copropietario->id );
-
-                $pagos = Pagos::ByCopropietario( $copropietario->id );
-
-                $consorcio = Consorcios::all()->where( 'id', '=', $copropietario->id_consorcio )->first();
-
-                return $general->responseSuccessAPI( UserTransformer::detallecopropietario( $copropietario, $consorcio, $reclamos, $pagos ) );
-                
-            } catch (\Exception $e)
-            {
-                return $general->responseErrorAPI( $e->getMessage() );
-            }
+            return $general->responseSuccessAPI( $response );
+        }
+        else
+        {
+            return $general->responseErrorAPI( $response, 500 );
         }
     }
     
@@ -119,11 +103,47 @@ class CopropietariosController extends Controller
 
         if( $validator->fails() )
         {
+            return $general->responseErrorAPI( $validator->messages()->first(), 505 );
+        }
+        else
+        {
+            $response = $service->register( $data );
+
+            if ( !is_array( $response ) )
+            {
+                return $general->responseSuccessAPI( $response );
+            }
+            else
+            {
+                return $general->responseErrorAPI( $response, 504 );
+            }
+        }
+    }
+    
+    public function forgotPassword(Request $request)
+    {
+        $data = $request->all();
+        $general = new General();
+        $service = new UserService();
+        $validator = UsuariosValidations::cambiarClave( $data );
+
+        if( $validator->fails() )
+        {
             return $general->responseErrorAPI( $validator->messages()->first() );
         }
         else
-            return $general->responseSuccessAPI( $service->register( $data ) );
+        {
+            $response = $service->createUserFromCopropietarioEmail( $data );
 
+            if ( !is_array( $response ) )
+            {
+                return $general->responseSuccessAPI( $response );
+            }
+            else
+            {
+                return $general->responseErrorAPI( $response, 503 );
+            }
+        }
     }
 
     public function updateInfo (Request $request, $uuid)
@@ -186,7 +206,7 @@ class CopropietariosController extends Controller
 
             } catch ( \Exception $e )
             {
-                return $general->responseErrorAPI( $e->getMessage() );
+                return $general->responseErrorAPI( $e->getMessage(), 500 );
             }
         }
     }

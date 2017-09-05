@@ -38,33 +38,7 @@ class UserTransformer
         return $response;
     }
 
-    public static function detallecopropietario( $copropietario, $consorcio, $reclamos, $pagos )
-    {
-        $response = new \stdClass;
-
-        $response->id = $copropietario->uuid;
-        $response->nombre = $copropietario->nombre;
-        $response->email = $copropietario->email;
-        $response->piso = $copropietario->piso;
-        $response->departamento = $copropietario->departamento;
-        $response->telefono = $copropietario->telefono;
-
-        if ( $consorcio != null )
-        {
-            $response->id_consorcio = $consorcio->uuid;
-            $response->consorcio = $consorcio->nombre;
-        }
-
-        if ( is_array( $reclamos ) )
-            $response->reclamos = $reclamos;
-
-        if ( is_array( $pagos ) )
-            $response->pagos = $pagos;
-
-        return $response;
-    }
-
-    public static function nuevocopropietario( $usuario, $copropietario, $consorcio, $reclamos, $pagos )
+    public static function detallecopropietario( $usuario, $copropietario, $consorcio, $reclamos, $pagos )
     {
         $response = new \stdClass;
 
