@@ -11,16 +11,28 @@ namespace App\Transformers;
 
 class UserTransformer
 {
-    /*public static function nuevocopropietario( $copropietario )
+    public static function copropietariosporconsorcio( $copropietarios )
     {
-        $response = [
-            'id' => $copropietario->uuid,
-            'nombre' => $copropietario->nombre,
-            'email' => $copropietario->email
-        ];
+        $response = [];
+
+        foreach ( $copropietarios as $copropietario )
+        {
+
+            $co = new \stdClass;
+
+            $co->id = $copropietario->uuid;
+            $co->piso = $copropietario->piso;
+            $co->nombre = $copropietario->nombre;
+            $co->email = $copropietario->email;
+            $co->depto = $copropietario->departamento;
+            $co->tlfno = $copropietario->telefono;
+
+            array_push( $response, $co );
+        }
 
         return $response;
-    }*/
+
+    }
 
     public static function copropietarioactualizado( $copropietario )
     {
@@ -34,6 +46,19 @@ class UserTransformer
             'piso' => $copropietario->piso,
             'telefono' => $copropietario->telefono,
         ];
+
+        return $response;
+    }
+
+    public static function detalleusuario( $usuario )
+    {
+        $response = new \stdClass;
+
+        $response->id = $usuario->uuid;
+        $response->rol = $usuario->id_rol;
+        $response->nombre = $usuario->name;
+        $response->email = $usuario->email;
+        $response->token = $usuario->access_token;
 
         return $response;
     }

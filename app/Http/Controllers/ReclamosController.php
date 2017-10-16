@@ -16,6 +16,7 @@ use App\Validations\ReclamosValidation;
 
 class ReclamosController extends Controller
 {
+
     public function save(Request $request)
     {
         $data = $request->all();
@@ -66,6 +67,38 @@ class ReclamosController extends Controller
     
     public function byConsorcio( Request $request, $uuid )
     {
-        
+        $general = new General();
+        $service = new ReclamosService();
+
+        $byConsorcio = $service->getByConsorcio($uuid);
+
+        if ( $byConsorcio != null && is_array( $byConsorcio ) )
+        {
+            return $general->responseSuccessAPI( $byConsorcio );
+        }
+        else
+        {
+            return $general->responseErrorAPI( "No hay reclamos para este consorcio", 500 );
+        }
+
     }
+
+    public function byCopropietario( Request $request, $uuid )
+    {
+        $general = new General();
+        $service = new ReclamosService();
+
+        $byCopropietario = $service->getByCopropietario( $uuid );
+
+        if ( $byCopropietario != null && is_array( $byCopropietario ) )
+        {
+            return $general->responseSuccessAPI( $byCopropietario );
+        }
+        else
+        {
+            return $general->responseErrorAPI( "No hay reclamos para este consorcio", 500 );
+        }
+
+    }
+
 }

@@ -33,40 +33,58 @@ class UserService
 
                 $usuario->access_token = "Bearer " . $token;
 
-                $reclamos = Reclamos::ByCopropietario( $copropietario->id );
-
-                $pagos = Pagos::ByCopropietario( $copropietario->id );
-
-                $consorcio = Consorcios::all()->where( 'id', '=', $copropietario->id_consorcio )->first();
-
                 $rol = Rol::all()->where('id', $usuario->id_rol)->first();
 
                 if ( $rol instanceof Rol )
                     $usuario->id_rol = $rol->nombre;
 
-                return UserTransformer::detallecopropietario( $usuario, $copropietario, $consorcio, $reclamos, $pagos );
+                if ( strcasecmp( $rol->nombre, 'admin') != 0 ) {
 
-            } catch (\Exception $e)
+                    $reclamos = Reclamos::ByCopropietario( $copropietario->id );
+
+                    $pagos = Pagos::ByCopropietario( $copropietario->id );
+
+                    $consorcio = Consorcios::all()->where( 'id', '=', $copropietario->id_consorcio )->first();
+
+                    return UserTransformer::detallecopropietario( $usuario, $copropietario, $consorcio, $reclamos, $pagos );
+
+                } else
+                    return UserTransformer::detallecopropietario( $usuario, $copropietario, null, null, null );
+
+            }
+            catch (\Exception $e)
             {
                 return [ 'error' => $e->getMessage() ];
             }
         }
     }
 
-    public function detailUserByUuid( $uuid )
+    public function copropietariosByConsorcio( $uuid )
+    {
+
+        $consorcios = Consorcios::all()->where( 'uuid', $uuid )->first();
+
+        $copropietarios = Copropietarios::all()->where( 'id_consorcio', $consorcios->id )->all();
+
+        return UserTransformer::copropietariosporconsorcio( $copropietarios );
+
+    }
+
+    public function detailCopropietarioByUuid( $uuid )
     {
         $copropietario =  Copropietarios::all()->where( 'uuid', $uuid )->first();
 
         if ( $copropietario instanceof  Copropietarios && $copropietario != null)
         {
-
             try
             {
-                $usuario = User::all()->where( 'id', $copropietario->id_user )->first();
+                $usuario = User::all()->where('id', $copropietario->id_user)->first();
 
                 $token = $usuario->createToken('Llegate')->accessToken;
 
                 $usuario->access_token = "Bearer " . $token;
+
+                $rol = Rol::all()->where('id', $usuario->id_rol)->first();
 
                 $reclamos = Reclamos::ByCopropietario( $copropietario->id );
 
@@ -74,12 +92,36 @@ class UserService
 
                 $consorcio = Consorcios::all()->where( 'id', '=', $copropietario->id_consorcio )->first();
 
-                $rol = Rol::all()->where('id', $usuario->id_rol)->first();
-
-                if ( $rol instanceof Rol )
-                    $usuario->id_rol = $rol->nombre;
-
                 return UserTransformer::detallecopropietario( $usuario, $copropietario, $consorcio, $reclamos, $pagos );
+            }
+            catch (\Exception $e)
+            {
+                return [ 'error' => $e->getMessage() ];
+            }
+
+        }
+    }
+
+    public function detailUserByUuid( $uuid )
+    {
+        $user = User::all()->where( 'uuid', $uuid )->first();
+
+        if ( $user instanceof User && $user != null)
+        {
+
+            try
+            {
+
+                $token = $user->createToken('Llegate')->accessToken;
+
+                $user->access_token = "Bearer " . $token;
+
+                $rol = Rol::all()->where('id', $user->id_rol)->first();
+                
+                if ( $rol instanceof Rol )
+                    $user->id_rol = $rol->nombre;
+
+                return UserTransformer::detalleusuario($user);
 
             } catch (\Exception $e)
             {
@@ -168,49 +210,38 @@ class UserService
 
             if ( $copropietario->id_user == null )
             {
-                //$nuevousuario = new User();
-
-                $input['uuid'] = '';
-                $input['id_rol'] = 2;
-                $input['name'] = $copropietario->nombre;
-                $input['email'] = $data['email'];
-                $input['password'] = bcrypt( $data[ 'clave' ] );
-
-                $nuevousuario = User::create( $input );
-
-                /*
-                 *
-                 * $nuevousuario->uuid = '';
-                 * $nuevousuario->id_rol = 2;
-                 * $nuevousuario->name = $data['nombre'];
-                 * $nuevousuario->email = $data['email'];
-                 * $nuevousuario->password = bcrypt( $data[ 'clave' ] );
-                 *
-                 * if ( $nuevousuario != null )
-                 *
-                 * $nuevousuario = new User();
-                 *
-                 * $nuevousuario->uuid = '';
-                 * $nuevousuario->id_rol = 2;
-                 * $nuevousuario->name = $copropietario->nombre;
-                 * $nuevousuario->email = $data['email'];
-                 * $nuevousuario->password = bcrypt( $data[ 'clave' ] );
-                 *
-                 * */
-
-                try
-                {
-                    if ( $nuevousuario != null && $nuevousuario->save() )
-                    {
-                        $usuario = User::all()->where( 'id', $nuevousuario->id )->first();
-                        $copropietario->id_user = $nuevousuario->id;
+            
+            	$usuario = User::all()->where( 'email', $data['email'] )->first();
+            	
+            	if( $usuario instanceof User && $usuario != null )
+            	{
+            		$copropietario->id_user = $usuario->id;
                         $copropietario->save();
-                    }
-                }
-                catch ( \Exception $e)
-                {
-                    return [ 'error' => $e->getMessage() ];
-                }
+            	}
+            	else
+            	{
+                	$input['uuid'] = '';
+	                $input['id_rol'] = 2;
+                	$input['name'] = $copropietario->nombre;
+                	$input['email'] = $data['email'];
+                	$input['password'] = bcrypt( $data[ 'clave' ] );
+
+                	$nuevousuario = User::create( $input );		
+
+                	try
+                	{
+                    		if ( $nuevousuario != null && $nuevousuario->save() )
+                    		{
+                        		$usuario = User::all()->where( 'id', $nuevousuario->id )->first();
+                        		$copropietario->id_user = $nuevousuario->id;
+                        		$copropietario->save();
+                    		}
+                	}
+                	catch ( \Exception $e)
+                	{
+                    		return [ 'error' => $e->getMessage() ];
+                	}
+            	}
             }
             else
             {
@@ -251,6 +282,6 @@ class UserService
 
         }
         else
-            return [ 'error' => "Ha ocurrido un error" ];
+            return [ 'error' => "Parece que aun no te haz registrado." ];
     }
 }

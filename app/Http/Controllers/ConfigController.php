@@ -27,6 +27,18 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 use App\Models\Tiposreclamo;
 use App\Transformers\TipoReclamoTransformer;
 
+/**
+ * @SWG\Swagger(
+ *   basePath="/",
+ *   @SWG\Info(
+ *     title="OneProp API",
+ *     version="0.0.1",
+ *     @SWG\Contact(
+ *          email="andres92898@gmail.com"
+ *     )
+ *   )
+ * )
+ */
 class ConfigController extends Controller
 {
 
@@ -102,6 +114,27 @@ class ConfigController extends Controller
 
         return $general->responseSuccessAPI( $bancos );
     }
+
+    /**
+     * @SWG\Get(path="/api/consorcios",
+     *   summary="List of consorcios",
+     *   description="Returns list of consorcios",
+     *   operationId="consorcios",
+     *   produces={"application/json"},
+     *   parameters={},
+     *   @SWG\Response(
+     *     response=200,
+     *     description="successful operation",
+     *     @SWG\Schema(
+     *       type="object",
+     *       additionalProperties={
+     *         "id":"string",
+     *         "nombre":"int32"
+     *       }
+     *     )
+     *   )
+     * )
+     */
 
     public function consorcios()
     {

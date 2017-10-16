@@ -9,6 +9,7 @@
 namespace App\Services;
 
 use App\Models\Bancos;
+use App\Models\Consorcios;
 use App\Models\Copropietarios;
 use App\Models\Pagos;
 use App\Models\TiposMovimiento;
@@ -98,5 +99,20 @@ class PagosService
 
 
         return $validFields;
+    }
+
+    public function getByCopropietario( $id )
+    {
+        $copropietario = Copropietarios::all()->where( 'uuid', '=', $id )->first();
+
+        return Pagos::ByCopropietario( $copropietario->id );
+    }
+
+    public function getByConsorcio( $id )
+    {
+        $consorcio = Consorcios::all()->where( 'uuid', '=', $id )->first();
+
+        return Pagos::ByConsorcio( $consorcio->id );
+
     }
 }

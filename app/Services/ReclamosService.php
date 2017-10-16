@@ -132,4 +132,33 @@ class ReclamosService
 
         return $photo;
     }
+
+    public function getByConsorcio( $uuid )
+    {
+        $byConsorcio = null;
+
+        $consorcio = Consorcios::all()->where( 'uuid', '=', $uuid )->first();
+        
+        if ( $consorcio instanceof Consorcios && $consorcio != null )
+        {
+            $byConsorcio = Reclamos::ByConsorcio( $consorcio->id );
+        }
+
+        return $byConsorcio;
+    }
+
+    public function getByCopropietario( $id )
+    {
+        $byCopropietario = null;
+
+        $copropietario = Copropietarios::all()->where( 'uuid', '=', $id )->first();
+
+        if ( $copropietario instanceof Consorcios && $copropietario != null )
+        {
+            $byCopropietario = Reclamos::ByCopropietario( $copropietario->id );
+        }
+
+        return $byCopropietario;
+    }
+
 }

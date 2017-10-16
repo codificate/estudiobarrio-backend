@@ -38,4 +38,23 @@ class PagosController
                 return $general->responseSuccessAPI( $pago );
         }
     }
+
+    public function byConsorcio( Request $request, $uuid )
+    {
+        $general = new General();
+        $service = new PagosService();
+
+        return $general->responseSuccessAPI( $service->getByConsorcio( $uuid ) );
+
+    }
+
+    public function byCopropietario( Request $request, $uuid )
+    {
+        $general = new General();
+        $service = new PagosService();
+
+        return $general->responseSuccessAPI( $service->getByCopropietario( $uuid ) );
+
+    }
+
 }

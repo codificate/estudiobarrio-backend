@@ -24,9 +24,9 @@ class UsuariosValidations
             'email.unique' => 'Este email ya existe en nuestra base de datos',
             'clave.required' => 'El campo clave no puede estar vacío',
             'clave.min' => 'La clave debe tener un minimo de 6 caracteres',
-            'confirmarclave.required' => 'Debe confirmar la clave',
-            'confirmarclave.same' => 'Las claves no coinciden',
-            'confirmarclave.min' => 'La clave debe tener un minimo de 6 caracteres',
+            //'confirmarclave.required' => 'Debe confirmar la clave',
+            //'confirmarclave.same' => 'Las claves no coinciden',
+            //'confirmarclave.min' => 'La clave debe tener un minimo de 6 caracteres',
             'consorcio.required' => 'Debe seleccionar un consorcio',
         );
         
@@ -34,7 +34,7 @@ class UsuariosValidations
         $rules['nombre']        = 'required|max:60';
         $rules['email']         = 'required|email|max:255|unique:users';
         $rules['clave']         = 'required|min:6';
-        $rules['confirmarclave']= 'required|same:clave|min:6|max:20';
+        //$rules['confirmarclave']= 'required|same:clave|min:6|max:20';
         $rules['consorcio']     = 'required';
 
         $validator = Validator::make($data, $rules, $messages);
@@ -48,15 +48,15 @@ class UsuariosValidations
             'email.email' => 'El campo email no tiene una direccion de correo valida',
             'clave.required' => 'El campo clave no puede estar vacío',
             'clave.min' => 'La clave debe tener un minimo de 6 caracteres',
-            'confirmarclave.required' => 'Debe confirmar la clave',
-            'confirmarclave.same' => 'Las claves no coinciden',
-            'confirmarclave.min' => 'La clave debe tener un minimo de 6 caracteres',
+            //'confirmarclave.required' => 'Debe confirmar la clave',
+            //'confirmarclave.same' => 'Las claves no coinciden',
+            //'confirmarclave.min' => 'La clave debe tener un minimo de 6 caracteres',
         );
 
         $rules = [];
         $rules['email']         = 'required|email|max:255';
         $rules['clave']         = 'required|min:6';
-        $rules['confirmarclave']= 'required|same:clave|min:6|max:20';
+        //$rules['confirmarclave']= 'required|same:clave|min:6|max:20';
 
         $validator = Validator::make($data, $rules, $messages);
         return $validator;

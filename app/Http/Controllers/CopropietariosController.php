@@ -10,11 +10,13 @@ namespace App\Http\Controllers;
 
 use App\Models\FotosReclamos;
 use App\Models\Pagos;
+use App\Models\Rol;
 use App\Services\UserService;
 use App\Utils\General;
 use App\Models\Consorcios;
 use App\Models\Copropietarios;
 use App\Models\Reclamos;
+use App\User;
 use App\Transformers\UserTransformer;
 use App\Validations\UsuariosValidations;
 use Illuminate\Http\Request;
@@ -46,16 +48,45 @@ class CopropietariosController extends Controller
 
     }
 
+    public function byConsorcio(Request $request, $uuid)
+    {
+        $response = null;
+        $general = new General();
+        $service = new UserService();
+
+        return $service->copropietariosByConsorcio( $uuid );
+
+    }
+
     public function login()
     {
+        $response = null;
         $general = new General();
         $service = new UserService();
 
         if ( Auth::attempt( [ 'email' => request('email'), 'password' => request('password') ] ) )
         {
+            $response = null;
             $usuario = Auth::user();
 
-            $response = $service->detailUser( $usuario );
+            $rol = Rol::all()->where('id', $usuario->id_rol)->first();
+
+            /**
+             * Si el rol del usuario logueado es copropietario
+             */
+
+            if ( strcasecmp( $rol->nombre, 'admin') != 0 )
+            {
+                $response = $service->detailUser( $usuario );
+            }
+            else
+            {
+                /**
+                 * Si el rol del usuario logueado es admin
+                 */
+
+                $response = $service->detailUserByUuid( $usuario->uuid );
+            }
 
             if ( !is_array( $response ) )
                 return $general->responseSuccessAPI( $response );
@@ -68,11 +99,11 @@ class CopropietariosController extends Controller
 
             if ( $copropietario instanceof  Copropietarios && $copropietario != null)
             {
-                return $general->responseErrorAPI( "Por favor actualiza tu clave para iniciar sesion", 502 );
+                return $general->responseErrorAPI( array( 'error' => "Por favor actualiza tu clave para iniciar sesion" ) , 502 );
             }
             else
             {
-                return $general->responseErrorAPI( "Al parecer aun no te haz dado de alta!", 501 );
+                return $general->responseErrorAPI( array( 'error' => "Al parecer aun no te haz dado de alta!" ), 501 );
             }
         }
     }
@@ -82,9 +113,9 @@ class CopropietariosController extends Controller
         $general = new General();
         $service = new UserService();
 
-        $response = $service->detailUserByUuid( $uuid );
+        $response = $service->detailCopropietarioByUuid( $uuid );
 
-        if ( !is_array( $response ) )
+        if ( is_object( $response ) )
         {
             return $general->responseSuccessAPI( $response );
         }
@@ -197,13 +228,42 @@ class CopropietariosController extends Controller
 
                 if( $copropietario->save() )
                 {
-                    $reclamosbycopropietario = Reclamos::ByCopropietario( $copropietario->id );
-
-                    $consorcio = Consorcios::all()->where( 'id', '=', $copropietario->id_consorcio )->first();
-
-                    return $general->responseSuccessAPI( UserTransformer::detallecopropietario( $copropietario, $consorcio, $reclamosbycopropietario ) );
+                
+               	    $usuario = User::all()->where('id', $copropietario->id_user)->first();
+               	    
+               	    $usuario->name = $copropietario->nombre;
+               	    $usuario->email = $copropietario->email;
+               	    
+               	    try
+               	    {
+               	    
+               	    	if ( $usuario->save() )
+	               	{
+	               	    
+	               		$reclamosbycopropietario = Reclamos::ByCopropietario( $copropietario->id );
+	                    
+	                    	$pagos = Pagos::ByCopropietario( $copropietario->id );
+	
+	                    	$consorcio = Consorcios::all()->where( 'id', '=', $copropietario->id_consorcio )->first();
+	
+	                    	return $general->responseSuccessAPI( 
+	                    		UserTransformer::detallecopropietario( 
+	                    			$usuario, 
+	                    			$copropietario, 
+	                    			$consorcio, 
+	                    			$reclamosbycopropietario, 
+	                    			$pagos 
+	                    		) 
+	                    	);
+	               	    
+	               	}
+               	    
+               	    } catch ( \Exception $e )
+               	    {
+               	    	return $general->responseErrorAPI( $e->getMessage(), 500 );
+               	    }	       	    
                 }
-
+                
             } catch ( \Exception $e )
             {
                 return $general->responseErrorAPI( $e->getMessage(), 500 );

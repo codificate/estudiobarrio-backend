@@ -67,4 +67,30 @@ class Pagos extends Model
         return $result;
     }
 
+    public function scopeByConsorcio($query, $id)
+    {
+        $resutl = null;
+
+        $query =
+            "select p.uuid id, p.fecha, p.comentario, co.nombre, co.email, co.telefono, ".
+            "b.banco, p.monto, p.estado ".
+            "from pagos p, copropietarios co, bancos b ".
+            "where p.id_copropietario = co.id and ".
+            "p.id_copropietario in ( select id from copropietarios where id_consorcio = " . $id . ") " .
+            "order by p.fecha desc";
+
+        try
+        {
+
+            $result = DB::select(DB::raw($query));
+
+        }
+        catch (\Exception $e)
+        {
+            $result = $e->getMessage();
+        }
+
+        return $result;
+    }
+
 }
