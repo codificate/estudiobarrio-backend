@@ -153,7 +153,7 @@ class ReclamosService
 
         $copropietario = Copropietarios::all()->where( 'uuid', '=', $id )->first();
 
-        if ( $copropietario instanceof Consorcios && $copropietario != null )
+        if ( $copropietario instanceof Copropietarios && $copropietario != null )
         {
             $byCopropietario = Reclamos::ByCopropietario( $copropietario->id );
         }
