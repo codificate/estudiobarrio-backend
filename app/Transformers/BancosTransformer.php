@@ -9,7 +9,7 @@
 namespace App\Transformers;
 
 
-class BancosTransformer
+class BancosTransformer extends Optimus
 {
 
     public static function transformCollection( $data )
@@ -21,11 +21,15 @@ class BancosTransformer
 
             foreach ( $data as $x )
             {
-                $response [] = [
-                    'id' => $x->uuid,
-                    'nombre' => $x->banco
-                ];
+
+                $obj = new \stdClass;
+                $obj->id = $x->uuid;
+                $obj->nombre = $x->banco;
+
+                array_push( $response, $obj );
             }
+
+            $response = BancosTransformer::orderByNombre( $response );
 
         }
 

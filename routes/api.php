@@ -32,15 +32,14 @@ Route::post('reclamo/fotos', 'ReclamosController@savePhotos');
 
 Route::group([ 'middleware' => 'auth:api' ], function () {
 
+    Route::get('bancos', 'ConfigController@bancos');
+    Route::get('estadopagos', 'ConfigController@estadoPagos');
     Route::get('tiporeclamos', 'ConfigController@tipoReclamos');
     Route::get('tipomovimientos', 'ConfigController@tipoMovimieto');
-    Route::get('estadopagos', 'ConfigController@estadoPagos');
     Route::get('estadoreclamos', 'ConfigController@estadoReclamos');
-    Route::get('bancos', 'ConfigController@bancos');
-    Route::get('consorcios', 'ConfigController@consorcios');
 
-    Route::put('copropietario/{uuid}/update', 'CopropietariosController@updateInfo');
     Route::get('copropietario/{uuid}', 'CopropietariosController@detailInfo');
+    Route::put('copropietario/{uuid}/update', 'CopropietariosController@updateInfo');
     Route::get('copropietarios/byconsorcio/{uuid}', 'CopropietariosController@byConsorcio');
 
     Route::post('reclamo', 'ReclamosController@save');

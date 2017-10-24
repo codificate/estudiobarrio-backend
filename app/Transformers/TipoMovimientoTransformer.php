@@ -9,7 +9,7 @@
 namespace App\Transformers;
 
 
-class TipoMovimientoTransformer
+class TipoMovimientoTransformer extends Optimus
 {
     public static function transformCollection( $data )
     {
@@ -20,11 +20,15 @@ class TipoMovimientoTransformer
 
             foreach ( $data as $x )
             {
-                $response [] = [
-                    'id' => $x->uuid,
-                    'nombre' => $x->movimiento
-                ];
+
+                $obj = new \stdClass;
+                $obj->id = $x->uuid;
+                $obj->nombre = $x->movimiento;
+
+                array_push( $response, $obj );
             }
+
+            $response = TipoMovimientoTransformer::orderByNombre( $response );
 
         }
 

@@ -12,6 +12,8 @@
         
         service.Consorcios = Consorcios;
         service.ByConsorcio = ByConsorcio;
+        service.TiposReclamo = TiposReclamo;
+        service.EstadosReclamo = EstadosReclamo;
         service.ByCopropietario = ByCopropietario;
         service.CopropietariosByConsorcio = CopropietariosByConsorcio;
 
@@ -19,115 +21,161 @@
 
         function ByConsorcio(consorcioid, callback) {
 
-          var req = {
-            method: 'GET',
-            url: service.domain + 'api/reclamo/byconsorcio/' + consorcioid,
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-              'Authorization': $localStorage.currentUser.token
-            }
-          }
+            var req = {
+                method: 'GET',
+                url: service.domain + 'api/reclamo/byconsorcio/' + consorcioid,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': $localStorage.currentUser.token
+                }
+            };
 
-          console.log( req );
+            $http(req).then(
 
-          $http(req)
-          .then(
+                function successCallback(response){
+                    callback(response);
+                },
 
-            function successCallback(response){
-
-              callback(response);
-            },
-
-            function errorCallback(response){
-
-              callback(response);
-            });
-      }
-
-
-
-      function ByCopropietario(copropietarioid, callback) {
-
-        var req = {
-          method: 'GET',
-          url: service.domain + 'api/reclamo/bycopropietario/' + copropietarioid,
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Authorization': $localStorage.currentUser.token
-          }
+                function errorCallback(response){
+                    callback(response);
+                }
+            );
         }
 
-        console.log( req );
+        function ByCopropietario(copropietarioid, callback) {
 
-        $http(req)
-        .then(
+            var req = {
+                method: 'GET',
+                url: service.domain + 'api/reclamo/bycopropietario/' + copropietarioid,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': $localStorage.currentUser.token
+                }
+            };
 
-          function successCallback(response){
+            $http(req).then(
 
-            callback(response);
-          },
+                function successCallback(response){
+                    callback(response);
+                },
 
-          function errorCallback(response){
-
-            callback(response);
-          });
-      }
-
-      function CopropietariosByConsorcio(consorcioid, callback) {
-
-        var req = {
-          method: 'GET',
-          url: service.domain + 'api/copropietarios/byconsorcio/' + consorcioid,
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Authorization': $localStorage.currentUser.token
-          }
+                function errorCallback(response){
+                    callback(response);
+                }
+            );
         }
 
-        console.log(req);
+        function CopropietariosByConsorcio(consorcioid, callback) {
 
-        $http(req)
-        .then(
+            var req = {
+                method: 'GET',
+                url: service.domain + 'api/copropietarios/byconsorcio/' + consorcioid,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': $localStorage.currentUser.token
+                }
+            };
 
-          function successCallback(response){
-            callback(response);
-          },
+            $http(req).then(
 
-          function errorCallback(response){
-            console.log( response );
-            callback(response);
-          });
-    }
+                function successCallback(response){
+                    callback(response);
+                },
 
-      function Consorcios( callback ){
+                function errorCallback(response){
+                    callback(response);
+                }
+            );
+        }
 
-          var req = {
-            method: 'GET',
-            url: service.domain + 'api/consorcios',
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-              'Authorization': $localStorage.currentUser.token
-            }
-          }
+        function Consorcios( callback ){
 
-          $http(req)
-          .then(
+            var req = {
+                method: 'GET',
+                url: service.domain + 'api/consorcios',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': $localStorage.currentUser.token
+                }
+            };
 
-            function successCallback(response){
-              $localStorage.consorcios = response.data;
-              callback(response);
-            },
+            $http(req).then(
 
-            function errorCallback(response){
+                function successCallback(response){
+                    $localStorage.consorcios = response.data;
+                    callback(response);
+                },
+                function errorCallback(response){
+                    callback(response);
+                }
+            );
+        }
 
-              callback(response);
-            });
+        function TiposReclamo( callback ){
 
-      }
+            var req = {
+                method: 'GET',
+                url: service.domain + 'api/tiporeclamos',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': $localStorage.currentUser.token
+                }
+            };
+
+            $http(req).then(
+
+                function successCallback(response){
+
+                    console.log(response);
+
+                    $localStorage.tiposreclamo = response.data;
+                    callback(response);
+                },
+                function errorCallback(response){
+
+
+                    console.log(response);
+                    callback(response);
+                }
+            );
+
+        }
+
+        function EstadosReclamo(callback) {
+
+            var req = {
+                method: 'GET',
+                url: service.domain + 'api/estadoreclamos',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': $localStorage.currentUser.token
+                }
+            };
+
+            $http(req).then(
+
+                function successCallback(response){
+
+                    console.log(response);
+
+                    $localStorage.estadosreclamo = response.data;
+                    callback(response);
+                },
+                function errorCallback(response){
+
+
+                    console.log(response);
+                    callback(response);
+                }
+            );
+
+        }
 
     }
 

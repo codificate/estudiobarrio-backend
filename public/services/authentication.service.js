@@ -9,6 +9,7 @@
         var service = {};
 
         service.domain = 'http://localhost:8000/';
+        //service.domain = 'http://estudiobarrio.plexarg.com/';
 
         service.Login = Login;
         service.Logout = Logout;
@@ -27,7 +28,7 @@
               'Accept': 'application/json'
             },
             data: datalogin
-          }
+          };
 
           $http(req)
           .then(

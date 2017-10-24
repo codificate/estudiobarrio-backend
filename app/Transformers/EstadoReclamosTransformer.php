@@ -9,7 +9,7 @@
 namespace App\Transformers;
 
 
-class EstadoReclamosTransformer
+class EstadoReclamosTransformer extends Optimus
 {
     public static function transformCollection( $data )
     {
@@ -20,11 +20,14 @@ class EstadoReclamosTransformer
 
             foreach ( $data as $x )
             {
-                $response [] = [
-                    'id' => $x->uuid,
-                    'nombre' => $x->valor
-                ];
+                $obj = new \stdClass;
+                $obj->id = $x->uuid;
+                $obj->nombre = $x->valor;
+
+                array_push( $response, $obj );
             }
+
+            $response = EstadoReclamosTransformer::orderByNombre( $response );
 
         }
 

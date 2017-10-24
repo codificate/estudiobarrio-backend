@@ -9,7 +9,7 @@
 namespace App\Transformers;
 
 
-class ConsorciosTransformer
+class ConsorciosTransformer extends Optimus
 {
     public static function transformCollection( $data )
     {
@@ -20,11 +20,14 @@ class ConsorciosTransformer
 
             foreach ( $data as $x )
             {
-                $response [] = [
-                    'id' => $x->uuid,
-                    'nombre' => $x->nombre
-                ];
+                $obj = new \stdClass;
+                $obj->id = $x->uuid;
+                $obj->nombre = $x->nombre;
+
+                array_push( $response, $obj );
             }
+
+            $response = ConsorciosTransformer::orderByNombre( $response );
 
         }
 
