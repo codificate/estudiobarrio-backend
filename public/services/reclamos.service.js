@@ -8,8 +8,9 @@
     function Service($http, $localStorage) {
         var service = {};
 
-        service.domain = 'http://localhost:8000/';
-        
+        //service.domain = 'http://localhost:8000/';
+        service.domain = 'http://estudiobarrio.plexarg.com/';
+
         service.Consorcios = Consorcios;
         service.ByConsorcio = ByConsorcio;
         service.TiposReclamo = TiposReclamo;
@@ -130,9 +131,6 @@
             $http(req).then(
 
                 function successCallback(response){
-
-                    console.log(response);
-
                     $localStorage.tiposreclamo = response.data;
                     callback(response);
                 },
@@ -161,9 +159,6 @@
             $http(req).then(
 
                 function successCallback(response){
-
-                    console.log(response);
-
                     $localStorage.estadosreclamo = response.data;
                     callback(response);
                 },

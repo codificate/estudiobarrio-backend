@@ -11,18 +11,21 @@
         vm.loading = false;
         vm.reclamos = null;
         vm.consorcios = null;
+        vm.tiposelected = null;
         vm.tiposreclamo = null;
+        vm.estadoselected = null;
         vm.copropietarios = null;
         vm.consorcioselected = null;
-        vm.consorciowasselected = false;
+        vm.copropietarioselected = null;
 
         vm.copropietariowasselected = false;
-        vm.copropietarioselected = null;
+        vm.consorciowasselected = false;
+        vm.estadowasselected = false;
         vm.tipowasselected = false;
-        vm.tiposelected = null;
         vm.showcolumns = true;
 
         vm.getReclamosByCopropietario = getReclamosByCopropietario;
+        vm.getReclamosByEstadoReclamo = getReclamosByEstadoReclamo;
         vm.getReclamosByTipoReclamo = getReclamosByTipoReclamo;
         vm.getEstadosReclamo = getEstadosReclamo;
         vm.getByConsorcio = getByConsorcio;
@@ -96,6 +99,40 @@
                 }
 
             });
+
+            vm.reclamos = reclamosFiltrados;
+
+        }
+
+        function getReclamosByEstadoReclamo( nombre ){
+
+            vm.estadoselected = nombre;
+            vm.estadowasselected = true;
+
+            var cantidadTipoEstado = 0;
+
+            var reclamosFiltrados = [];
+
+            vm.reclamostmp.forEach(function(entry) {
+
+                if ( vm.tipowasselected ){
+                    if( entry.estado == nombre && entry.tipo == vm.tiposelected )
+                        reclamosFiltrados.push( entry );
+                } else {
+                    if( entry.estado == nombre)
+                        reclamosFiltrados.push( entry );
+                }
+
+                /* if( entry.estado == nombre && entry.tipo == vm.tiposelected ){
+
+
+                } else {
+                    reclamosFiltrados.push( entry );
+                } */
+
+            });
+
+            console.log( cantidadTipoEstado );
 
             vm.reclamos = reclamosFiltrados;
 

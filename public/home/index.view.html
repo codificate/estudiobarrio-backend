@@ -129,6 +129,7 @@
                         <li class="breadcrumb-item" ng-show="vm.consorciowasselected">{{vm.consorcioselected}}</li>
                         <li class="breadcrumb-item" ng-show="vm.copropietariowasselected">{{vm.copropietarioselected}}</li>
                         <li class="breadcrumb-item" ng-show="vm.tipowasselected">{{vm.tiposelected}}</li>
+                        <li class="breadcrumb-item" ng-show="vm.estadowasselected">{{vm.estadoselected}}</li>
                     </ol>
                 </div>
             </div>
@@ -174,12 +175,12 @@
                 </div>
                 <div class="col-ms-4">
                     <div class="dropdown m-r-10 hidden-sm-down">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuEstadosReclamoButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Tipos de reclamo</button>
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuEstadosReclamoButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Estados de reclamo</button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 
                             <div ng-repeat="estado in vm.estadosreclamo" >
 
-                                <a class="dropdown-item" ng-click="vm.getReclamosByEstadosReclamo( estado.nombre )" ng-show="estado.nombre != null">{{ estado.nombre }}</a>
+                                <a class="dropdown-item" ng-click="vm.getReclamosByEstadoReclamo( estado.nombre )" ng-show="estado.nombre != null">{{ estado.nombre }}</a>
 
                             </div>
 
