@@ -8,6 +8,11 @@
     function Controller($location, $localStorage, ReclamosService ) {
         var vm = this;
 
+        vm.config = {
+            itemsPerPage: 50,
+            fillLastPage: true
+        };
+
         vm.loading = false;
         vm.reclamos = null;
         vm.consorcios = null;
