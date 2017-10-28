@@ -84,7 +84,21 @@
                         </ul>
                     </li>
                     <li>
-                        <a class="has-arrow" href="#" aria-expanded="false"><i class="mdi mdi-file"></i><span class="hide-menu">Pagos</span></a>
+                        <a class="has-arrow" href="#" aria-expanded="false" ng-click="vm.goToIngresarReclamo()"><i class="mdi mdi-file"></i><span class="hide-menu">Ingresar Pago</span></a>
+                        <ul aria-expanded="false" class="collapse">
+                            <li><a href="ingresar-pago.html">Ingresar Pago</a></li>
+                            <li><a href="listar-pago.html">Listar Pago</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a class="has-arrow" href="#" aria-expanded="false" ng-click="vm.goToPagos()"><i class="mdi mdi-file"></i><span class="hide-menu">Pagos</span></a>
+                        <ul aria-expanded="false" class="collapse">
+                            <li><a href="ingresar-pago.html">Ingresar Pago</a></li>
+                            <li><a href="listar-pago.html">Listar Pago</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a class="has-arrow" href="#" aria-expanded="false" ng-click="vm.goToIngresarPago()"><i class="mdi mdi-file"></i><span class="hide-menu">Ingresar Pago</span></a>
                         <ul aria-expanded="false" class="collapse">
                             <li><a href="ingresar-pago.html">Ingresar Pago</a></li>
                             <li><a href="listar-pago.html">Listar Pago</a></li>
@@ -121,36 +135,68 @@
             <!-- Bread crumb and right sidebar toggle -->
             <!-- ============================================================== -->
             <div class="row page-titles">
-                <div class="col-md-4 col-4 align-self-center">
-                    <h3 class="text-themecolor m-b-0 m-t-0">Pagos</h3>
+                <div class="col-md-12 align-self-center">
+                    <h3 class="text-themecolor m-b-0 m-t-0">Reclamos</h3>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="javascript:void(0)">Inicio</a></li>
-                        <li class="breadcrumb-item active">Listar pagos</li>
+                        <li class="breadcrumb-item active">Listar reclamos</li>
+                        <li class="breadcrumb-item" ng-show="vm.consorciowasselected">{{vm.consorcioselected}}</li>
                         <li class="breadcrumb-item" ng-show="vm.copropietariowasselected">{{vm.copropietarioselected}}</li>
+                        <li class="breadcrumb-item" ng-show="vm.tipowasselected">{{vm.tiposelected}}</li>
+                        <li class="breadcrumb-item" ng-show="vm.estadowasselected">{{vm.estadoselected}}</li>
                     </ol>
                 </div>
+            </div>
 
-                <div class="col-md-4 col-4 align-self-center">
-                    <div class="dropdown pull-right m-r-10 hidden-sm-down">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuConsorciosButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Seleccionar consorcio</button>
+            <div class="row">
+                <div class="col-ms-4">
+                    <div class="dropdown m-r-10 hidden-sm-down">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuConsorciosButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Buscar por consorcio</button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 
-                          <a ng-repeat="consorcio in vm.consorcios" class="dropdown-item" ng-click="vm.getCopropietariosByConsorcio( consorcio.id )" >{{consorcio.nombre}}</a>
+                            <a ng-repeat="consorcio in vm.consorcios" class="dropdown-item" ng-click="vm.getByConsorcio( consorcio.id, consorcio.nombre )" >{{consorcio.nombre}}</a>
 
                         </div>
                     </div>
                 </div>
-
-                <div class="col-md-4 col-4 align-self-center">
-                    <div class="dropdown pull-right m-r-10 hidden-sm-down">
+                <div class="col-ms-4">
+                    <div class="dropdown m-r-10 hidden-sm-down">
                         <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuCopropietarioButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Buscar por copropietario</button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 
-                          <div ng-repeat="copropietario in vm.copropietarios" >
+                            <div ng-repeat="copropietario in vm.copropietarios" >
 
-                            <a class="dropdown-item" ng-click="vm.getPagosByCopropietario( copropietario.id, copropietario.nombre )" ng-show="copropietario.nombre != null">{{ copropietario.nombre }}</a>
+                                <a class="dropdown-item" ng-click="vm.getReclamosByCopropietario( copropietario.id, copropietario.nombre )" ng-show="copropietario.nombre != null">{{ copropietario.nombre }}</a>
 
-                          </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-ms-4">
+                    <div class="dropdown m-r-10 hidden-sm-down">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuTiposReclamoButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Tipos de reclamo</button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+
+                            <div ng-repeat="tipo in vm.tiposreclamo" >
+
+                                <a class="dropdown-item" ng-click="vm.getReclamosByTipoReclamo( tipo.nombre )" ng-show="tipo.nombre != null">{{ tipo.nombre }}</a>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-ms-4">
+                    <div class="dropdown m-r-10 hidden-sm-down">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuEstadosReclamoButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Estados de reclamo</button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+
+                            <div ng-repeat="estado in vm.estadosreclamo" >
+
+                                <a class="dropdown-item" ng-click="vm.getReclamosByEstadoReclamo( estado.nombre )" ng-show="estado.nombre != null">{{ estado.nombre }}</a>
+
+                            </div>
 
                         </div>
                     </div>
@@ -161,59 +207,70 @@
             <!-- CONTENEDOR ANGULAR -->
             <!-- ============================================================== -->
 
-
             <div class="row">
-                <div class="col-12">
+                <div class="col-sm-12">
                     <div class="card">
                         <div class="card-block">
-                            <div class="table-responsive m-t-40">
-                                <table id="tablereclamoslist" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
-                                    <thead>
-                                        <tr>
-                                            <th>Fecha</th>
-                                            <th>Banco</th>
-                                            <th>Comentario</th>
-                                            <th>Estado</th>
-                                            <th>Monto</th>
-                                            <th>Movimiento</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr ng-repeat="x in vm.pagos">
-                                            <td>{{x.fecha}}</td>
-                                            <td>{{x.banco}}</td>
-                                            <td>{{x.comentario}}</td>
-                                            <td>{{x.estado}}</td>
-                                            <td>{{x.monto}}</td>
-                                            <td>{{x.movimiento}}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                            <h4 class="card-title">Ingrese el nuevo reclamo</h4>
 
-                                <!-- pager -->
-                                <ul ng-if="vm.pager.pages.length" class="pagination">
-                                    <li ng-class="{disabled:vm.pager.currentPage === 1}">
-                                        <a ng-click="vm.setPage(1)">First</a>
-                                    </li>
-                                    <li ng-class="{disabled:vm.pager.currentPage === 1}">
-                                        <a ng-click="vm.setPage(vm.pager.currentPage - 1)">Previous</a>
-                                    </li>
-                                    <li ng-repeat="page in vm.pager.pages" ng-class="{active:vm.pager.currentPage === page}">
-                                        <a ng-click="vm.setPage(page)">{{page}}</a>
-                                    </li>
-                                    <li ng-class="{disabled:vm.pager.currentPage === vm.pager.totalPages}">
-                                        <a ng-click="vm.setPage(vm.pager.currentPage + 1)">Next</a>
-                                    </li>
-                                    <li ng-class="{disabled:vm.pager.currentPage === vm.pager.totalPages}">
-                                        <a ng-click="vm.setPage(vm.pager.totalPages)">Last</a>
-                                    </li>
-                                </ul>
-
-                            </div>
+                            <form class="form">
+                                <div class="form-group row">
+                                    <label for="example-consorcio-input" class="col-2 col-form-label">Consorcio</label>
+                                    <div class="col-10">
+                                        <select class="custom-select col-12" id="example-consorcio-input">
+                                            <option selected="">Elija una opción</option>
+                                            <option ng-repeat="consorcio in vm.consorcios" ng-model="vm.consorcioid" value="{{consorcio.id}}">{{consorcio.nombre}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="example-copropietario-input" class="col-2 col-form-label">Copropietario</label>
+                                    <div class="col-10">
+                                        <select class="custom-select col-12" id="example-copropietario-input">
+                                            <option selected="">Elija una opción</option>
+                                            <option ng-repeat="copropietario in vm.copropietarios" ng-model="vm.copropietarioid" value="{{copropietario.id}}">{{copropietario.nombre}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="example-category-input" class="col-2 col-form-label">Categoría</label>
+                                    <div class="col-10">
+                                        <select class="custom-select col-12" id="example-category-input">
+                                            <option selected="">Elija una opción</option>
+                                            <option ng-repeat="tipo in vm.tiposreclamo" ng-model="vm.tipoid" value="{{ tipo.id }}">{{ tipo.nombre }}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="example-date-input" class="col-2 col-form-label">Fecha de seguimiento</label>
+                                    <div class="col-10">
+                                        <input class="form-control" type="date"  id="example-date-input">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="example-password-input" class="col-2 col-form-label">Información adicional</label>
+                                    <div class="col-10">
+                                        <input class="form-control" type="text"  id="example-password-input">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-2 col-form-label">Detalle</label>
+                                    <div class="col-10">
+                                        <textarea class="form-control" rows="5"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="example-datetime-local-input" class="col-2 col-form-label">Proveedor</label>
+                                    <div class="col-10">
+                                        <input class="form-control" type="text" id="example-datetime-local-input">
+                                    </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
             </div>
+
             <!-- ============================================================== -->
             <!-- End PAge Content -->
             <!-- ============================================================== -->

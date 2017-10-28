@@ -136,7 +136,7 @@ class Reclamos extends Model
 
     public function scopeByConsorcio($query, $id)
     {
-        $resutl = null;
+        $result = null;
 
         $query = " select re.uuid id, re.fecha, co.nombre, co.email, co.telefono, tr.reclamo tipo, er.valor estado,".
             " re.infoAdicional descripcion from reclamos re ".
@@ -144,6 +144,31 @@ class Reclamos extends Model
             " left join tipos_reclamo tr on re.tipo_reclamo = tr.id ".
             " left join estadoreclamos er on re.estado = er.id " .
             " where co.id_consorcio = " . $id . " and re.id_consorcio = " . $id . " order by re.fecha desc ";
+
+        try
+        {
+
+            $result = DB::select(DB::raw($query));
+
+        }catch (\Exception $e)
+        {
+            $result = $e->getMessage();
+        }
+
+        return $result;
+    }
+
+    public function scopeCreatedAtLastMonth($query)
+    {
+        $result = null;
+
+        $query = " select re.uuid id, re.fecha, co.nombre, co.email, co.telefono, tr.reclamo tipo, er.valor estado,".
+            " re.infoAdicional descripcion from reclamos re ".
+            " left join copropietarios co on re.id_copropietario = co.id " .
+            " left join tipos_reclamo tr on re.tipo_reclamo = tr.id ".
+            " left join estadoreclamos er on re.estado = er.id " .
+            " where DATE( re.fecha ) BETWEEN CONCAT( YEAR( CURRENT_DATE ), CONCAT( '-', CONCAT( MONTH( CURRENT_DATE ) - 3 , CONCAT( '-', DAY(CURRENT_DATE()) ) ) ) ) AND CURRENT_DATE()".
+            " order by re.fecha desc ";
 
         try
         {

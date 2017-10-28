@@ -101,4 +101,13 @@ class ReclamosController extends Controller
 
     }
 
+    public function getLastReclamosCreated( Request $request )
+    {
+        $general = new General();
+        $service = new ReclamosService();
+
+        return $general->responseSuccessAPI( $service->getLastCreated() );
+
+    }
+
 }

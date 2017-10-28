@@ -160,5 +160,10 @@ class ReclamosService
 
         return $byCopropietario;
     }
+    
+    public function getLastCreated()
+    {
+        return Reclamos::CreatedAtLastMonth();
+    }
 
 }

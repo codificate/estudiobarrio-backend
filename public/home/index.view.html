@@ -193,16 +193,15 @@
             <!-- CONTENEDOR ANGULAR -->
             <!-- ============================================================== -->
 
-
             <div class="row">
                 <div class="col-12">
                     <div class="card">
                         <div class="card-block">
                             <div class="table-responsive m-t-40">
-                                <table id="tablereclamoslist" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%"
-                                       at-table at-paginated at-list="vm.reclamos" at-config="config">
+
+                                <table id="tablereclamoslist" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                                     <thead>
-                                        <!--tr>
+                                        <tr>
                                             <th>Fecha</th>
                                             <th ng-show="vm.showcolumns">Copropietario</th>
                                             <th ng-show="vm.showcolumns">Email</th>
@@ -210,18 +209,11 @@
                                             <th>Tipo</th>
                                             <th>Estado</th>
                                             <th>Descripcion</th>
-                                        </tr-->
+                                        </tr>
                                     </thead>
                                     <tbody>
-                                        <tr> <!-- ng-repeat="x in vm.reclamos" -->
-                                            <td at-implicit at-sortable at-attribute="fecha" at-initial-sorting="desc"></td>
-                                            <td at-implicit at-sortable at-attribute="nombre" at-sortable></td>
-                                            <td at-implicit at-sortable at-attribute="email" at-sortable></td>
-                                            <td at-implicit at-sortable at-attribute="telefono" at-sortable></td>
-                                            <td at-implicit at-sortable at-attribute="tipo" at-sortable></td>
-                                            <td at-implicit at-sortable at-attribute="estado" at-sortable></td>
-                                            <td at-implicit at-sortable at-attribute="descripcion" at-sortable></td>
-                                            <!--td>
+                                        <tr ng-repeat="x in vm.reclamos" >
+                                            <td>
                                                 <img src="assets/images/reclamos_photos.svg" ng-show="x.fotos != null" ng-click="vm.showPhotos(x.descripcion, x.nombre)" />
                                                 {{x.fecha}}
                                             </td>
@@ -230,12 +222,29 @@
                                             <td ng-show="vm.showcolumns">{{x.telefono}}</td>
                                             <td>{{x.tipo}}</td>
                                             <td>{{x.estado}}</td>
-                                            <td>{{x.descripcion}}</td-->
+                                            <td>{{x.descripcion}}</td>
                                         </tr>
                                     </tbody>
                                 </table>
 
-                                <at-pagination at-list="vm.reclamos" at-config="config"></at-pagination>
+                                <!-- pager -->
+                                <ul ng-if="vm.pager.pages.length" class="pagination">
+                                    <li ng-class="{disabled:vm.pager.currentPage === 1}">
+                                        <a ng-click="vm.setPage(1)">First</a>
+                                    </li>
+                                    <li ng-class="{disabled:vm.pager.currentPage === 1}">
+                                        <a ng-click="vm.setPage(vm.pager.currentPage - 1)">Previous</a>
+                                    </li>
+                                    <li ng-repeat="page in vm.pager.pages" ng-class="{active:vm.pager.currentPage === page}">
+                                        <a ng-click="vm.setPage(page)">{{page}}</a>
+                                    </li>
+                                    <li ng-class="{disabled:vm.pager.currentPage === vm.pager.totalPages}">
+                                        <a ng-click="vm.setPage(vm.pager.currentPage + 1)">Next</a>
+                                    </li>
+                                    <li ng-class="{disabled:vm.pager.currentPage === vm.pager.totalPages}">
+                                        <a ng-click="vm.setPage(vm.pager.totalPages)">Last</a>
+                                    </li>
+                                </ul>
 
                             </div>
                         </div>

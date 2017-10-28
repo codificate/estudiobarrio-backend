@@ -13,15 +13,6 @@ use Illuminate\Http\Request;
 |
 */
 
-/*Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-Route::group(['middleware' => 'auth.basic'], function () {
-    Route::get('/api/tiporeclamos', 'ConfigController@tipoReclamos');
-});*/
-
-
 Route::get('consorcios', 'ConfigController@consorcios');
 
 Route::post('login', ['as' => 'login', 'uses' => 'CopropietariosController@login'] );
@@ -44,10 +35,12 @@ Route::group([ 'middleware' => 'auth:api' ], function () {
 
     Route::post('reclamo', 'ReclamosController@save');
     Route::get('reclamo/byconsorcio/{uuid}', 'ReclamosController@byConsorcio');
+    Route::get('reclamos/recientes', 'ReclamosController@getLastReclamosCreated');
     Route::get('reclamo/bycopropietario/{uuid}', 'ReclamosController@byCopropietario');
 
     Route::post('pago', 'PagosController@save');
     Route::get('pago/byconsorcio/{uuid}', 'PagosController@byConsorcio');
+    Route::get('pago/recientes', 'PagosController@getLastPagosCreated');
     Route::get('pago/bycopropietario/{uuid}', 'PagosController@byCopropietario');
 
     Route::get('user/{uuid}', 'UserController@detail');

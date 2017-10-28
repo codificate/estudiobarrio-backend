@@ -115,4 +115,9 @@ class PagosService
         return Pagos::ByConsorcio( $consorcio->id );
 
     }
+
+    public function getLastCreated()
+    {
+        return Pagos::CreatedAtLastMonth();
+    }
 }

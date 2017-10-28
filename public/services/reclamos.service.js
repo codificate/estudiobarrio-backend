@@ -12,6 +12,7 @@
         //service.domain = 'http://estudiobaarrio.plexarg.com/';
 
         service.Consorcios = Consorcios;
+        service.LastCreated = LastCreated;
         service.ByConsorcio = ByConsorcio;
         service.TiposReclamo = TiposReclamo;
         service.EstadosReclamo = EstadosReclamo;
@@ -170,6 +171,29 @@
                 }
             );
 
+        }
+
+        function LastCreated(callback){
+
+            var req = {
+                method: 'GET',
+                url: service.domain + 'api/reclamos/recientes',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': $localStorage.currentUser.token
+                }
+            };
+
+            $http(req).then(
+
+                function successCallback(response){
+                    callback(response);
+                },
+                function errorCallback(response){
+                    callback(response);
+                }
+            );
         }
 
     }

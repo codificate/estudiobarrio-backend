@@ -57,4 +57,13 @@ class PagosController
 
     }
 
+    public function getLastPagosCreated( Request $request )
+    {
+        $general = new General();
+        $service = new PagosService();
+
+        return $general->responseSuccessAPI( $service->getLastCreated() );
+
+    }
+
 }

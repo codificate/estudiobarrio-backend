@@ -46,13 +46,14 @@ class Pagos extends Model
     public function scopeByCopropietario( $query, $copropietario )
     {
 
-        $resutl = null;
+        $result = null;
 
-        $query = "select p.uuid id, p.fecha, p.monto, p.comentario, t.uuid id_movimiento, ".
-            "t.movimiento, b.uuid id_banco, b.banco, p.estado ".
-            "from pagos p, tipos_movimiento t, bancos b ".
-            "where p.id_copropietario =  " . $copropietario . " and p.id_banco = b.id and ".
-            "p.tipo_movimiento = t.id order by p.fecha desc";
+        $query =    "select p.uuid id, p.fecha, p.monto, p.comentario, t.uuid id_movimiento, ".
+                    "t.movimiento, b.uuid id_banco, b.banco, p.estado ".
+                    "from pagos p ".
+                    "left join tipos_movimiento t on p.tipo_movimiento = t.id ".
+                    "left join bancos b on p.id_banco = b.id ".
+                    "where p.id_copropietario =  " . $copropietario . " order by p.fecha desc";
 
         try
         {
@@ -69,15 +70,13 @@ class Pagos extends Model
 
     public function scopeByConsorcio($query, $id)
     {
-        $resutl = null;
+        $result = null;
 
-        $query =
-            "select p.uuid id, p.fecha, p.comentario, co.nombre, co.email, co.telefono, ".
-            "b.banco, p.monto, p.estado ".
-            "from pagos p, copropietarios co, bancos b ".
-            "where p.id_copropietario = co.id and ".
-            "p.id_copropietario in ( select id from copropietarios where id_consorcio = " . $id . ") " .
-            "order by p.fecha desc";
+        $query ="select p.uuid id, p.fecha, p.comentario, co.nombre, co.email, co.telefono, ".
+                "b.banco, p.monto, p.estado ".
+                "from pagos p ".
+                "left join copropietarios co on p.id_copropietario = co.id and co.id_consorcio = " . $id . " " .
+                "left join bancos b on p.id_banco = b.id order by p.fecha desc";
 
         try
         {
@@ -86,6 +85,33 @@ class Pagos extends Model
 
         }
         catch (\Exception $e)
+        {
+            $result = $e->getMessage();
+        }
+
+        return $result;
+    }
+
+    public function scopeCreatedAtLastMonth( $query )
+    {
+
+        $result = null;
+
+        $query = 
+            "select p.uuid id, p.fecha, p.monto, p.comentario, t.uuid id_movimiento, ".
+            "t.movimiento, b.uuid id_banco, b.banco, p.estado ".
+            "from pagos p ".
+            "left join tipos_movimiento t on p.tipo_movimiento = t.id ".
+            "left join bancos b on p.id_banco = b.id ".
+            "where p.fecha BETWEEN CONCAT( YEAR( CURRENT_DATE ), CONCAT( '-', CONCAT( MONTH( CURRENT_DATE ) - 3 , CONCAT( '-', DAY(CURRENT_DATE()) ) ) ) ) AND CURRENT_DATE()  " .
+            "order by p.fecha desc";
+
+        try
+        {
+
+            $result = DB::select(DB::raw($query));
+
+        }catch (\Exception $e)
         {
             $result = $e->getMessage();
         }
