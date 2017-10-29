@@ -188,6 +188,7 @@
             $http(req).then(
 
                 function successCallback(response){
+                    console.log(response);
                     callback(response);
                 },
                 function errorCallback(response){

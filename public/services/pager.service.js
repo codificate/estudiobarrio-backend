@@ -7,9 +7,9 @@
 
     angular
         .module('app')
-        .factory('PagerService', Service);
+        .factory('PagerService', PagerService);
     
-    function Service() {
+    function PagerService() {
         // service definition
         var service = {};
 

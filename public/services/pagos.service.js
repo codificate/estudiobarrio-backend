@@ -9,6 +9,7 @@
         var service = {};
 
         service.domain = 'http://localhost:8000/';
+        //service.domain = 'http://estudiobaarrio.plexarg.com/';
 
         service.LastCreated = LastCreated;
         service.PagosByCopropietario = PagosByCopropietario;
@@ -66,7 +67,7 @@
 
             var req = {
                 method: 'GET',
-                url: service.domain + 'api/reclamos/recientes',
+                url: service.domain + 'api/pago/recientes',
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',

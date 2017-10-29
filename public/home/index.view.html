@@ -126,10 +126,10 @@
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="javascript:void(0)">Inicio</a></li>
                         <li class="breadcrumb-item active">Listar reclamos</li>
-                        <li class="breadcrumb-item" ng-show="vm.consorciowasselected">{{vm.consorcioselected}}</li>
-                        <li class="breadcrumb-item" ng-show="vm.copropietariowasselected">{{vm.copropietarioselected}}</li>
-                        <li class="breadcrumb-item" ng-show="vm.tipowasselected">{{vm.tiposelected}}</li>
-                        <li class="breadcrumb-item" ng-show="vm.estadowasselected">{{vm.estadoselected}}</li>
+                        <li class="breadcrumb-item" ng-show="vm.consorciowasselected">{{vm.consorcioselected}} <img src="assets/images/close.svg" ng-click="vm.isLastCriteria(vm.consorcioselected )" style="display: inline-block;" ></li>
+                        <li class="breadcrumb-item" ng-show="vm.copropietariowasselected">{{vm.copropietarioselected}} <img src="assets/images/close.svg" ng-click="vm.isLastCriteria(vm.copropietarioselected )" style="display: inline-block;" ></li>
+                        <li class="breadcrumb-item" ng-show="vm.tipowasselected">{{vm.tiposelected}} <img src="assets/images/close.svg" ng-click="vm.isLastCriteria( vm.tiposelected )" style="display: inline-block;" ></li>
+                        <li class="breadcrumb-item" ng-show="vm.estadowasselected">{{vm.estadoselected}} <img src="assets/images/close.svg" ng-click="vm.isLastCriteria(vm.estadoselected )" style="display: inline-block;" > </li>
                     </ol>
                 </div>
             </div>
