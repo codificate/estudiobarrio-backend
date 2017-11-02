@@ -140,10 +140,10 @@
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="javascript:void(0)">Inicio</a></li>
                         <li class="breadcrumb-item active">Listar reclamos</li>
-                        <li class="breadcrumb-item" ng-show="vm.consorciowasselected">{{vm.consorcioselected}} <img src="assets/images/close.svg" ng-click="vm.isLastCriteria(vm.consorcioselected )" style="display: inline-block;" ></li>
-                        <li class="breadcrumb-item" ng-show="vm.copropietariowasselected">{{vm.copropietarioselected}} <img src="assets/images/close.svg" ng-click="vm.isLastCriteria(vm.copropietarioselected )" style="display: inline-block;" ></li>
-                        <li class="breadcrumb-item" ng-show="vm.tipowasselected">{{vm.tiposelected}} <img src="assets/images/close.svg" ng-click="vm.isLastCriteria( vm.tiposelected )" style="display: inline-block;" ></li>
-                        <li class="breadcrumb-item" ng-show="vm.estadowasselected">{{vm.estadoselected}} <img src="assets/images/close.svg" ng-click="vm.isLastCriteria(vm.estadoselected )" style="display: inline-block;" > </li>
+                        <li class="breadcrumb-item" ng-show="vm.consorciowasselected">{{vm.consorcioselected}}</li>
+                        <li class="breadcrumb-item" ng-show="vm.copropietariowasselected">{{vm.copropietarioselected}}</li>
+                        <li class="breadcrumb-item" ng-show="vm.tipowasselected">{{vm.tiposelected}} <img src="assets/images/close.svg" ng-click="vm.removeCriteria( vm.tiposelected )" style="display: inline-block;" ></li>
+                        <li class="breadcrumb-item" ng-show="vm.estadowasselected">{{vm.estadoselected}} <img src="assets/images/close.svg" ng-click="vm.removeCriteria(vm.estadoselected )" style="display: inline-block;" > </li>
                     </ol>
                 </div>
             </div>
@@ -230,8 +230,8 @@
                                     <tbody>
                                         <tr ng-repeat="x in vm.reclamos" >
                                             <td>
-                                                <img src="assets/images/reclamos_photos.svg" ng-show="x.fotos != null" ng-click="vm.showPhotos(x.descripcion, x.nombre)" />
-                                                {{x.fecha}}
+                                                <img src="assets/images/reclamos_photos.svg" ng-show="x.fotos != null" ng-click="vm.showPhotos()" />
+                                                {{x.fecha | date:'dd/MM/yyyy @ h:mma'}}
                                             </td>
                                             <td ng-show="vm.showcolumns">{{x.nombre}}</td>
                                             <td ng-show="vm.showcolumns">{{x.email}}</td>
