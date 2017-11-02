@@ -8,7 +8,7 @@
 
     function config($stateProvider, $urlRouterProvider, $httpProvider) {
 
-      $urlRouterProvider.otherwise("/");
+        //$urlRouterProvider.otherwise("/");
 
         // app routes
         $stateProvider
@@ -28,6 +28,18 @@
                 url: '/login',
                 templateUrl: 'login/index.view.html',
                 controller: 'Login.IndexController',
+                controllerAs: 'vm'
+            })
+            .state('nuevoreclamo', {
+                url: '/reclamos/nuevo',
+                templateUrl: 'nuevoreclamo/index.view.html',
+                controller: 'Nuevoreclamo.IndexController',
+                controllerAs: 'vm'
+            })
+            .state('nuevopago', {
+                url: '/pagos/nuevo',
+                templateUrl: 'nuevopago/index.view.html',
+                controller: 'NuevoPago.IndexController',
                 controllerAs: 'vm'
             });
     }

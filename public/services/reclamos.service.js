@@ -9,7 +9,7 @@
         var service = {};
 
         service.domain = 'http://localhost:8000/';
-        //service.domain = 'http://estudiobaarrio.plexarg.com/';
+        //service.domain = 'http://estudiobarrio.plexarg.com/';
 
         service.Consorcios = Consorcios;
         service.LastCreated = LastCreated;
@@ -188,7 +188,6 @@
             $http(req).then(
 
                 function successCallback(response){
-                    console.log(response);
                     callback(response);
                 },
                 function errorCallback(response){

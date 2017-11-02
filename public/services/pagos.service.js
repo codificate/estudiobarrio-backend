@@ -9,8 +9,11 @@
         var service = {};
 
         service.domain = 'http://localhost:8000/';
-        //service.domain = 'http://estudiobaarrio.plexarg.com/';
+        //service.domain = 'http://estudiobarrio.plexarg.com/';
 
+        service.Bancos = Bancos;
+        service.Movimientos = Movimientos;
+        service.EstadoPagos = EstadoPagos;
         service.LastCreated = LastCreated;
         service.PagosByCopropietario = PagosByCopropietario;
         service.CopropietariosByConsorcio = CopropietariosByConsorcio;
@@ -61,6 +64,75 @@
                     function errorCallback(response){
                         callback(response);
                 });
+        }
+
+        function Bancos( callback ){
+
+            var req = {
+                method: 'GET',
+                url: service.domain + 'api/bancos',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': $localStorage.currentUser.token
+                }
+            };
+
+            $http(req)
+                .then(
+                    function successCallback(response){
+                        $localStorage.bancos = response.data;
+                        callback(response);
+                    },
+                    function errorCallback(response){
+                        callback(response);
+                    });
+        }
+
+        function EstadoPagos( callback ){
+
+            var req = {
+                method: 'GET',
+                url: service.domain + 'api/estadopagos',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': $localStorage.currentUser.token
+                }
+            };
+
+            $http(req)
+                .then(
+                    function successCallback(response){
+                        $localStorage.movimientos = response.data;
+                        callback(response);
+                    },
+                    function errorCallback(response){
+                        callback(response);
+                    });
+        }
+
+        function Movimientos( callback ){
+
+            var req = {
+                method: 'GET',
+                url: service.domain + 'api/tipomovimientos',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': $localStorage.currentUser.token
+                }
+            };
+
+            $http(req)
+                .then(
+                    function successCallback(response){
+                        $localStorage.movimientos = response.data;
+                        callback(response);
+                    },
+                    function errorCallback(response){
+                        callback(response);
+                    });
         }
 
         function LastCreated(callback){

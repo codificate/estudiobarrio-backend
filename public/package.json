@@ -1,0 +1,16 @@
+{
+  "name": "public",
+  "version": "1.0.0",
+  "description": "librerias para estudiobarrio",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "andres92898@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "angular": "^1.6.6",
+    "angular-h-sweetalert": "^2.0.1",
+    "sweetalert2": "^6.11.1"
+  }
+}

@@ -77,19 +77,33 @@
                     <li class="nav-devider"></li>
                     <li class="nav-small-cap">SERVICIOS</li>
                     <li>
-                        <a class="has-arrow" href="#" aria-expanded="false"><i class="mdi mdi-file"></i><span class="hide-menu">Reclamos</span></a>
+                        <a class="has-arrow" href="#" aria-expanded="false" ng-click="vm.goToReclamos()"><i class="mdimdi-file"></i><span class="hide-menu">Reclamos</span></a>
+                        <!--ul aria-expanded="false" class="collapse">
+                            <li><a href="ingresar-reclamo.html">Ingresar Reclamo</a></li>
+                            <li><a href="listar-reclamo.html">Listar Reclamo</a></li>
+                        </ul-->
+                    </li>
+                    <!--li>
+                        <a class="has-arrow" href="#" aria-expanded="false" ng-click="vm.goToNuevoReclamo()"><i class="mdi mdi-file"></i><span class="hide-menu">Nuevo Reclamo</span></a>
                         <ul aria-expanded="false" class="collapse">
                             <li><a href="ingresar-reclamo.html">Ingresar Reclamo</a></li>
                             <li><a href="listar-reclamo.html">Listar Reclamo</a></li>
                         </ul>
-                    </li>
+                    </li-->
                     <li>
                         <a class="has-arrow" href="#" aria-expanded="false" ng-click="vm.goToPagos()"><i class="mdi mdi-file"></i><span class="hide-menu">Pagos</span></a>
+                        <!--ul aria-expanded="false" class="collapse">
+                            <li><a href="ingresar-pago.html">Ingresar Pago</a></li>
+                            <li><a href="listar-pago.html">Listar Pago</a></li>
+                        </ul-->
+                    </li>
+                    <!--li>
+                        <a class="has-arrow" href="#" aria-expanded="false" ng-click="vm.goToNuevoPago()"><i class="mdi mdi-file"></i><span class="hide-menu">Nuevo Pago</span></a>
                         <ul aria-expanded="false" class="collapse">
                             <li><a href="ingresar-pago.html">Ingresar Pago</a></li>
                             <li><a href="listar-pago.html">Listar Pago</a></li>
                         </ul>
-                    </li>
+                    </li-->
                 </ul>
             </nav>
             <!-- End Sidebar navigation -->
@@ -134,7 +148,8 @@
                 </div>
             </div>
 
-            <div class="row">
+            <div class="row ">
+
                 <div class="col-ms-4">
                     <div class="dropdown m-r-10 hidden-sm-down">
                         <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuConsorciosButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Buscar por consorcio</button>
@@ -187,6 +202,7 @@
                         </div>
                     </div>
                 </div>
+
             </div>
 
             <!-- ============================================================== -->

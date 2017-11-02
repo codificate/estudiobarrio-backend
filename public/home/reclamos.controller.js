@@ -32,9 +32,11 @@
         vm.getReclamosByEstadoReclamo = getReclamosByEstadoReclamo;
         vm.getReclamosByTipoReclamo = getReclamosByTipoReclamo;
         vm.getEstadosReclamo = getEstadosReclamo;
+        vm.goToNuevoReclamo = goToNuevoReclamo;
         vm.getByConsorcio = getByConsorcio;
         vm.isLastCriteria = isLastCriteria;
         vm.getConsorcios = getConsorcios;
+        vm.goToReclamos = goToReclamos;
         vm.goToPagos = goToPagos;
         vm.getPager = getPager;
         vm.setPage = setPage;
@@ -226,31 +228,55 @@
 
         function getConsorcios(){
 
-            ReclamosService.Consorcios( function (result) {
+            if ( $localStorage.consorcios ){
 
-                vm.consorcios = result.data;
+                vm.consorcios = $localStorage.consorcios;
 
-            });
+            } else {
+
+                ReclamosService.Consorcios( function (result) {
+
+                    vm.consorcios = result.data;
+
+                });
+
+            }
 
         }
         
         function getTiposReclamo() {
 
-            ReclamosService.TiposReclamo( function (result) {
+            if ( $localStorage.tiposreclamo ){
 
-                vm.tiposreclamo = result.data;
+                vm.tiposreclamo = $localStorage.tiposreclamo;
 
-            } );
+            } else {
+
+                ReclamosService.TiposReclamo( function (result) {
+
+                    vm.tiposreclamo = result.data;
+
+                } );
+
+            }
 
         }
 
         function getEstadosReclamo() {
 
-            ReclamosService.EstadosReclamo( function (result) {
+            if ( $localStorage.estadosreclamo ){
 
-                vm.estadosreclamo = result.data;
+                vm.estadosreclamo = $localStorage.estadosreclamo;
 
-            } );
+            } else {
+
+                ReclamosService.EstadosReclamo( function (result) {
+
+                    vm.estadosreclamo = result.data;
+
+                } );
+
+            }
 
         }
 
@@ -269,6 +295,18 @@
             });
         }
 
+        function goToReclamos(){
+
+            $location.path('/');
+
+        }
+
+        function goToNuevoReclamo(){
+
+            $location.path('/reclamos/nuevo');
+
+        }
+
         function goToPagos(){
 
           $location.path('/pagos');
@@ -285,10 +323,10 @@
                     vm.tipowasselected = false;
                 }
 
-                if ( entry.tipo == criteria ){
-                    entry.tipo = null;
-                    vm.tiposelected = null;
-                    vm.tipowasselected = false;
+                if ( entry.estado == criteria ){
+                    entry.estado = null;
+                    vm.estadoselected = null;
+                    vm.estadowasselected = false;
                 }
 
             });
@@ -298,6 +336,9 @@
         function logout(){
             delete $localStorage.currentUser;
             delete $localStorage.tiposreclamo;
+            delete $localStorage.estadosreclamo;
+            delete $localStorage.consorcios;
+
             $location.path('/login');
         }
 

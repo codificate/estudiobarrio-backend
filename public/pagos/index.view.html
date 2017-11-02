@@ -77,19 +77,33 @@
                     <li class="nav-devider"></li>
                     <li class="nav-small-cap">SERVICIOS</li>
                     <li>
-                        <a class="has-arrow" href="#" aria-expanded="false"><i class="mdi mdi-file"></i><span class="hide-menu">Reclamos</span></a>
+                        <a class="has-arrow" href="#" aria-expanded="false" ng-click="vm.goToReclamos()"><i class="mdimdi-file"></i><span class="hide-menu">Reclamos</span></a>
+                        <!--ul aria-expanded="false" class="collapse">
+                            <li><a href="ingresar-reclamo.html">Ingresar Reclamo</a></li>
+                            <li><a href="listar-reclamo.html">Listar Reclamo</a></li>
+                        </ul-->
+                    </li>
+                    <!--li>
+                        <a class="has-arrow" href="#" aria-expanded="false" ng-click="vm.goToNuevoReclamo()"><i class="mdi mdi-file"></i><span class="hide-menu">Nuevo Reclamo</span></a>
                         <ul aria-expanded="false" class="collapse">
                             <li><a href="ingresar-reclamo.html">Ingresar Reclamo</a></li>
                             <li><a href="listar-reclamo.html">Listar Reclamo</a></li>
                         </ul>
-                    </li>
+                    </li-->
                     <li>
-                        <a class="has-arrow" href="#" aria-expanded="false"><i class="mdi mdi-file"></i><span class="hide-menu">Pagos</span></a>
+                        <a class="has-arrow" href="#" aria-expanded="false" ng-click="vm.goToPagos()"><i class="mdi mdi-file"></i><span class="hide-menu">Pagos</span></a>
+                        <!--ul aria-expanded="false" class="collapse">
+                            <li><a href="ingresar-pago.html">Ingresar Pago</a></li>
+                            <li><a href="listar-pago.html">Listar Pago</a></li>
+                        </ul-->
+                    </li>
+                    <!--li>
+                        <a class="has-arrow" href="#" aria-expanded="false" ng-click="vm.goToNuevoPago()"><i class="mdi mdi-file"></i><span class="hide-menu">Nuevo Pago</span></a>
                         <ul aria-expanded="false" class="collapse">
                             <li><a href="ingresar-pago.html">Ingresar Pago</a></li>
                             <li><a href="listar-pago.html">Listar Pago</a></li>
                         </ul>
-                    </li>
+                    </li-->
                 </ul>
             </nav>
             <!-- End Sidebar navigation -->
@@ -127,34 +141,77 @@
                         <li class="breadcrumb-item"><a href="javascript:void(0)">Inicio</a></li>
                         <li class="breadcrumb-item active">Listar pagos</li>
                         <li class="breadcrumb-item" ng-show="vm.copropietariowasselected">{{vm.copropietarioselected}}</li>
+                        <li class="breadcrumb-item" ng-show="vm.tipowasselected">{{vm.tiposelected}} <img src="assets/images/close.svg" ng-click="vm.isLastCriteria( vm.tiposelected )" style="display: inline-block;" ></li>
+                        <li class="breadcrumb-item" ng-show="vm.estadowasselected">{{vm.estadoselected}} <img src="assets/images/close.svg" ng-click="vm.isLastCriteria(vm.estadoselected )" style="display: inline-block;" > </li>
                     </ol>
                 </div>
+            </div>
 
-                <div class="col-md-4 col-4 align-self-center">
-                    <div class="dropdown pull-right m-r-10 hidden-sm-down">
+            <div class="row">
+
+                <div class="col-ms-4">
+                    <div class="dropdown m-r-10 hidden-sm-down">
                         <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuConsorciosButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Seleccionar consorcio</button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 
-                          <a ng-repeat="consorcio in vm.consorcios" class="dropdown-item" ng-click="vm.getCopropietariosByConsorcio( consorcio.id )" >{{consorcio.nombre}}</a>
+                            <a ng-repeat="consorcio in vm.consorcios" class="dropdown-item" ng-click="vm.getCopropietariosByConsorcio( consorcio.id )" >{{consorcio.nombre}}</a>
 
                         </div>
                     </div>
                 </div>
 
-                <div class="col-md-4 col-4 align-self-center">
-                    <div class="dropdown pull-right m-r-10 hidden-sm-down">
+                <div class="col-ms-4">
+                    <div class="dropdown m-r-10 hidden-sm-down">
                         <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuCopropietarioButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Buscar por copropietario</button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <div ng-repeat="copropietario in vm.copropietarios" >
 
-                          <div ng-repeat="copropietario in vm.copropietarios" >
+                                <a class="dropdown-item" ng-click="vm.getPagosByCopropietario( copropietario.id, copropietario.nombre )" ng-show="copropietario.nombre != null">{{ copropietario.nombre }}</a>
 
-                            <a class="dropdown-item" ng-click="vm.getPagosByCopropietario( copropietario.id, copropietario.nombre )" ng-show="copropietario.nombre != null">{{ copropietario.nombre }}</a>
-
-                          </div>
-
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                <div class="col-ms-4">
+                    <div class="dropdown m-r-10 hidden-sm-down">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuBancosButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Buscar por banco</button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <div ng-repeat="banco in vm.bancos" >
+
+                                <a class="dropdown-item" ng-click="vm.getPagosByBanco( banco.nombre )" ng-show="banco.nombre != null">{{ banco.nombre }}</a>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-ms-4">
+                    <div class="dropdown m-r-10 hidden-sm-down">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuEstadoButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Buscar por estado</button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <div ng-repeat="estado in vm.estadopagos" >
+
+                                <a class="dropdown-item" ng-click="vm.getPagosByEstado( estado.nombre )" ng-show="estado.nombre != null">{{ estado.nombre }}</a>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-ms-4">
+                    <div class="dropdown m-r-10 hidden-sm-down">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuMovimientosButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Buscar por Movimiento</button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <div ng-repeat="movimiento in vm.movimientos" >
+
+                                <a class="dropdown-item" ng-click="vm.getPagosByMovimiento( movimiento.nombre )" ng-show="movimiento.nombre != null">{{ movimiento.nombre }}</a>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
             <!-- ============================================================== -->
