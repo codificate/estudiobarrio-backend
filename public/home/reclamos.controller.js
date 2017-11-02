@@ -10,10 +10,10 @@
 
         vm.pager = {};
 
-        vm.criteriasselected = [];
+        vm.criteriasselected = { tipo: null, estado: null, copropietario: null };
 
-        vm.loading = false;
         vm.reclamos = null;
+        vm.reclamostmp = [];
         vm.consorcios = null;
         vm.tiposelected = null;
         vm.tiposreclamo = null;
@@ -27,14 +27,16 @@
         vm.estadowasselected = false;
         vm.tipowasselected = false;
         vm.showcolumns = true;
+        vm.loading = false;
 
         vm.getReclamosByCopropietario = getReclamosByCopropietario;
         vm.getReclamosByEstadoReclamo = getReclamosByEstadoReclamo;
         vm.getReclamosByTipoReclamo = getReclamosByTipoReclamo;
         vm.getEstadosReclamo = getEstadosReclamo;
         vm.goToNuevoReclamo = goToNuevoReclamo;
+        vm.filterByCriteria = filterByCriteria;
         vm.getByConsorcio = getByConsorcio;
-        vm.isLastCriteria = isLastCriteria;
+        vm.removeCriteria = removeCriteria;
         vm.getConsorcios = getConsorcios;
         vm.goToReclamos = goToReclamos;
         vm.goToPagos = goToPagos;
@@ -78,26 +80,8 @@
             ReclamosService.ByConsorcio( consorcioid, function (result) {
                 vm.reclamos = result.data;
                 vm.reclamostmp = result.data;
-                vm.loading = false;
 
-                var consorcioExistAsCriteria = false;
-
-                vm.criteriasselected.forEach(function (entry) {
-
-                    if ( entry.consorcio !== null ){
-
-                        entry.consorcio = consorcioname;
-                        consorcioExistAsCriteria = true;
-
-                    }
-
-                });
-
-                if ( consorcioExistAsCriteria == false ){
-                    vm.criteriasselected.push({
-                        consorcio : consorcioname
-                    })
-                }
+                vm.filterByCriteria();
 
                 getCopropietariosByConsorcio( consorcioid );
 
@@ -109,46 +93,25 @@
 
             ReclamosService.CopropietariosByConsorcio( consorcioid, function (result) {
 
+                vm.loading = false;
                 vm.copropietarios = result.data;
 
             });
         }
 
         function getReclamosByCopropietario( copropietarioid, copropietarioname ){
-
-            vm.loading = true;
+            
             vm.copropietariowasselected = true;
             vm.copropietarioselected = copropietarioname;
+            
+            vm.showcolumns = false;
 
-            ReclamosService.ByCopropietario( copropietarioid, function (result) {
+            vm.criteriasselected.copropietario = copropietarioname;
 
-                vm.reclamos = null;
-                vm.reclamos = result.data;
-                vm.reclamostmp = result.data;
-                vm.loading = false;
-                vm.showcolumns = false;
+            vm.filterByCriteria();
 
-                var copropietarioExistAsCriteria = false;
-
-                vm.criteriasselected.forEach(function (entry) {
-
-                    if ( entry.copropietario !== null ){
-
-                        entry.copropietario = copropietarioname;
-                        copropietarioExistAsCriteria = true;
-
-                    }
-
-                });
-
-                if ( copropietarioExistAsCriteria == false ){
-                    vm.criteriasselected.push({
-                        copropietario : copropietarioname
-                    })
-                }
-
-                vm.setPage(1);
-            });
+            vm.setPage(1);
+            
         }
 
         function getReclamosByTipoReclamo( nombre ) {
@@ -156,36 +119,9 @@
             vm.tiposelected = nombre;
             vm.tipowasselected = true;
 
-            var reclamosFiltrados = [];
+            vm.criteriasselected.tipo = nombre;
 
-            vm.reclamostmp.forEach(function(entry) {
-
-                if( entry.tipo == nombre ){
-                    reclamosFiltrados.push( entry );
-                }
-
-            });
-
-            var tipoExistAsCriteria = false;
-
-            vm.criteriasselected.forEach(function (entry) {
-
-                if ( entry.tipo !== null ){
-
-                    entry.tipo = nombre;
-                    tipoExistAsCriteria = true;
-
-                }
-
-            });
-
-            if ( tipoExistAsCriteria == false ){
-                vm.criteriasselected.push({
-                    tipo : nombre
-                })
-            }
-
-            vm.reclamos = reclamosFiltrados;
+            vm.filterByCriteria();
 
             vm.setPage(1);
 
@@ -202,25 +138,9 @@
             vm.estadoselected = nombre;
             vm.estadowasselected = true;
 
-            var reclamosFiltrados = [];
+            vm.criteriasselected.estado = nombre;
 
-            vm.reclamostmp.forEach(function(entry) {
-
-                if ( vm.tipowasselected ){
-                    if( entry.estado == nombre && entry.tipo == vm.tiposelected )
-                        reclamosFiltrados.push( entry );
-                } else {
-                    if( entry.estado == nombre)
-                        reclamosFiltrados.push( entry );
-                }
-
-            });
-
-            vm.criteriasselected.push({
-                estado : nombre
-            });
-
-            vm.reclamos = reclamosFiltrados;
+            vm.filterByCriteria();
 
             vm.setPage(1);
 
@@ -313,24 +233,162 @@
 
         }
 
-        function isLastCriteria( criteria ){
+        function removeCriteria( criteria ){
 
-            vm.criteriasselected.forEach(function (entry) {
+            if ( vm.criteriasselected.tipo == criteria ){
+                vm.criteriasselected.tipo = null;
+                vm.tiposelected = null;
+                vm.tipowasselected = false;
+            }
 
-                if ( entry.tipo == criteria ){
-                    entry.tipo = null;
-                    vm.tiposelected = null;
-                    vm.tipowasselected = false;
+            if ( vm.criteriasselected.estado == criteria ){
+                vm.criteriasselected.estado = null;
+                vm.estadoselected = null;
+                vm.estadowasselected = false;
+            }
+
+            vm.filterByCriteria();
+
+        }
+        
+        function filterByCriteria() {
+
+            var filtrados = [];
+
+            if ( vm.criteriasselected.tipo == null && vm.criteriasselected.estado == null && vm.criteriasselected.copropietario == null ){
+
+                /**
+                 * Busqueda sin filtros
+                 */
+
+                if ( vm.reclamostmp !== null ){
+
+                    vm.reclamostmp.forEach(function ( tmp ) {
+
+                        filtrados.push( tmp );
+                    });
+
                 }
 
-                if ( entry.estado == criteria ){
-                    entry.estado = null;
-                    vm.estadoselected = null;
-                    vm.estadowasselected = false;
+            } else if ( vm.criteriasselected.tipo !== null && vm.criteriasselected.estado !== null && vm.criteriasselected.copropietario !== null ) {
+
+                /**
+                 * Busqueda por: Tipo, Estado & Copropietario
+                 */
+
+                if ( vm.reclamostmp !== null ){
+
+                    vm.reclamostmp.forEach(function (tmp) {
+
+                        if ( tmp.tipo == vm.criteriasselected.tipo &&
+                                tmp.estado == vm.criteriasselected.estado &&
+                                    tmp.nombre == vm.criteriasselected.copropietario ){
+
+                            filtrados.push( tmp );
+                        }
+
+                    });
+
                 }
 
-            });
+            } else if ( vm.criteriasselected.tipo !== null && vm.criteriasselected.estado !== null && vm.criteriasselected.copropietario == null ) {
 
+                /**
+                 * Busqueda por: Tipo & Estado
+                 */
+
+                if ( vm.reclamostmp !== null ){
+
+                    vm.reclamostmp.forEach(function (tmp) {
+
+                        if ( tmp.tipo == vm.criteriasselected.tipo && tmp.estado == vm.criteriasselected.estado)
+                            filtrados.push( tmp );
+                    });
+
+                }
+
+            } else if ( vm.criteriasselected.tipo !== null && vm.criteriasselected.estado == null && vm.criteriasselected.copropietario == null ) {
+
+                /**
+                 * Busqueda por: Tipo
+                 */
+
+                if ( vm.reclamostmp !== null ){
+
+                    vm.reclamostmp.forEach(function (tmp) {
+
+                        if ( tmp.tipo == vm.criteriasselected.tipo )
+                            filtrados.push( tmp );
+                    });
+
+                }
+
+            } else if ( vm.criteriasselected.tipo == null && vm.criteriasselected.estado !== null && vm.criteriasselected.copropietario == null ) {
+
+                /**
+                 * Busqueda por: Estado
+                 */
+
+                if ( vm.reclamostmp !== null ){
+
+                    vm.reclamostmp.forEach(function (tmp) {
+
+                        if ( tmp.estado == vm.criteriasselected.estado )
+                            filtrados.push( tmp );
+                    });
+
+                }
+
+            } else if ( vm.criteriasselected.tipo == null && vm.criteriasselected.estado == null && vm.criteriasselected.copropietario !== null ) {
+
+                /**
+                 * Busqueda por: Copropietario
+                 */
+
+                if ( vm.reclamostmp !== null ){
+
+                    vm.reclamostmp.forEach(function (tmp) {
+
+                        if ( tmp.nombre == vm.criteriasselected.copropietario )
+                            filtrados.push( tmp );
+                    });
+
+                }
+
+            } else if ( vm.criteriasselected.tipo == null && vm.criteriasselected.estado !== null && vm.criteriasselected.copropietario !== null ) {
+
+                /**
+                 * Busqueda por: Estado & Copropietario
+                 */
+
+                if ( vm.reclamostmp !== null ){
+
+                    vm.reclamostmp.forEach(function (tmp) {
+
+                        if ( tmp.estado == vm.criteriasselected.estado && tmp.nombre == vm.criteriasselected.copropietario )
+                            filtrados.push( tmp );
+                    });
+
+                }
+            } else if ( vm.criteriasselected.tipo !== null && vm.criteriasselected.estado == null && vm.criteriasselected.copropietario !== null ) {
+
+                /**
+                 * Busqueda por: Tipo & Copropietario
+                 */
+
+                if ( vm.reclamostmp !== null ){
+
+                    vm.reclamostmp.forEach(function (tmp) {
+
+                        if ( tmp.tipo == vm.criteriasselected.tipo && tmp.nombre == vm.criteriasselected.copropietario )
+                            filtrados.push( tmp );
+                    });
+
+                }
+            }
+
+            vm.reclamos = filtrados;
+            
         }
 
         function logout(){
