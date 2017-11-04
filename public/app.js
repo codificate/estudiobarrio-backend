@@ -2,13 +2,11 @@
     'use strict';
 
     angular
-        .module('app', ['ui.router', 'ngMessages', 'ngStorage'])
+        .module('app', ['ngAnimate', 'ngTouch', 'ngSanitize', 'ui.router', 'ui.bootstrap', 'ngMessages', 'ngStorage'])
         .config(config)
         .run(run);
 
     function config($stateProvider, $urlRouterProvider, $httpProvider) {
-
-        //$urlRouterProvider.otherwise("/");
 
         // app routes
         $stateProvider

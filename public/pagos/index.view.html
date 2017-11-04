@@ -1,15 +1,27 @@
 <!-- ============================================================== -->
 <!-- Main wrapper - style you can find in pages.scss -->
 <!-- ============================================================== -->
-<div id="main-wrapper">
+<div id="main-wrapper" class="modal-demo">
 
-
+    <script type="text/ng-template" id="myModalContent.html">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-title">I'm a modal!</h3>
+      </div>
+      <div class="modal-body" id="modal-body">
+        lo que venga
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" type="button" ng-click="$ctrl.ok()">OK</button>
+      </div>
+    </script>
     <!-- ============================================================== -->
     <!-- Preloader - style you can find in spinners.css -->
     <!-- ============================================================== -->
     <div class="preloader" ng-show="vm.loading">
+      <div align="center" ng-show="vm.warning!==null">{{vm.warning}}</div>
         <svg class="circular" viewBox="25 25 50 50">
-            <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10" /> </svg>
+            <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10" />
+        </svg>
     </div>
 
     <!-- ============================================================== -->
@@ -140,9 +152,11 @@
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="javascript:void(0)">Inicio</a></li>
                         <li class="breadcrumb-item active">Listar pagos</li>
-                        <li class="breadcrumb-item" ng-show="vm.copropietariowasselected">{{vm.copropietarioselected}}</li>
-                        <li class="breadcrumb-item" ng-show="vm.tipowasselected">{{vm.tiposelected}} <img src="assets/images/close.svg" ng-click="vm.isLastCriteria( vm.tiposelected )" style="display: inline-block;" ></li>
-                        <li class="breadcrumb-item" ng-show="vm.estadowasselected">{{vm.estadoselected}} <img src="assets/images/close.svg" ng-click="vm.isLastCriteria(vm.estadoselected )" style="display: inline-block;" > </li>
+                        <li class="breadcrumb-item" ng-show="vm.consorciowasselected">{{vm.consorcioselected}} <img src="assets/images/close.svg" ng-click="vm.removeCriteria(vm.consorcioselected )" style="display: inline-block;" ></li>
+                        <li class="breadcrumb-item" ng-show="vm.copropietariowasselected">{{vm.copropietarioselected}} <img src="assets/images/close.svg" ng-click="vm.removeCriteria(vm.copropietarioselected )" style="display: inline-block;" ></li>
+                        <li class="breadcrumb-item" ng-show="vm.bancowasselected">{{vm.bancoselected}} <img src="assets/images/close.svg" ng-click="vm.removeCriteria(vm.bancoselected )" style="display: inline-block;" ></li>
+                        <li class="breadcrumb-item" ng-show="vm.tipowasselected">{{vm.tiposelected}} <img src="assets/images/close.svg" ng-click="vm.removeCriteria(vm.tiposelected )" style="display: inline-block;" ></li>
+                        <li class="breadcrumb-item" ng-show="vm.estadowasselected">{{vm.estadoselected}} <img src="assets/images/close.svg" ng-click="vm.removeCriteria(vm.estadoselected )" style="display: inline-block;" > </li>
                     </ol>
                 </div>
             </div>
@@ -154,7 +168,7 @@
                         <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuConsorciosButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Seleccionar consorcio</button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 
-                            <a ng-repeat="consorcio in vm.consorcios" class="dropdown-item" ng-click="vm.getCopropietariosByConsorcio( consorcio.id )" >{{consorcio.nombre}}</a>
+                            <a ng-repeat="consorcio in vm.consorcios" class="dropdown-item" ng-click="vm.getPagosByConsorcio( consorcio.id, consorcio.nombre )" >{{consorcio.nombre}}</a>
 
                         </div>
                     </div>
@@ -237,7 +251,7 @@
                                     </thead>
                                     <tbody>
                                         <tr ng-repeat="x in vm.pagos">
-                                            <td>{{x.fecha}}</td>
+                                            <td><div ng-click="vm.modalDetallePago(x)">{{x.fecha}}</div></td>
                                             <td>{{x.banco}}</td>
                                             <td>{{x.comentario}}</td>
                                             <td>{{x.estado}}</td>

@@ -21,7 +21,7 @@ class PagosTransformer
         $response->banco = $banco->banco;
         $response->id_movimiento = $tipo->uuid;
         $response->movimiento = $tipo->movimiento;
-        $response->monto = $pago->monto;
+        $response->monto = floatval( $pago->monto );
         $response->comentario = $pago->comentario;
 
         return $response;

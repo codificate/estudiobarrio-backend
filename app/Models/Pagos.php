@@ -49,10 +49,11 @@ class Pagos extends Model
         $result = null;
 
         $query =    "select p.uuid id, p.fecha, p.monto, p.comentario, t.uuid id_movimiento, ".
-                    "t.movimiento, b.uuid id_banco, b.banco, p.estado ".
+                    "t.movimiento, b.uuid id_banco, b.banco, ep.valor estado ".
                     "from pagos p ".
                     "left join tipos_movimiento t on p.tipo_movimiento = t.id ".
                     "left join bancos b on p.id_banco = b.id ".
+                    "left join estadopagos ep on p.estado = ep.id ".
                     "where p.id_copropietario =  " . $copropietario . " order by p.fecha desc";
 
         try
@@ -72,11 +73,14 @@ class Pagos extends Model
     {
         $result = null;
 
-        $query ="select p.uuid id, p.fecha, p.comentario, co.nombre, co.email, co.telefono, ".
-                "b.banco, p.monto, p.estado ".
+        $query ="select p.uuid id, p.fecha, p.comentario, co.nombre, co.email, co.telefono, t.uuid id_movimiento, ".
+                "t.movimiento, b.banco, p.monto, ep.valor estado ".
                 "from pagos p ".
-                "left join copropietarios co on p.id_copropietario = co.id and co.id_consorcio = " . $id . " " .
-                "left join bancos b on p.id_banco = b.id order by p.fecha desc";
+                "left join tipos_movimiento t on p.tipo_movimiento = t.id ".
+                "left join copropietarios co on p.id_copropietario = co.id " .
+                "left join bancos b on p.id_banco = b.id ".
+                "left join estadopagos ep on p.estado = ep.id ".
+                "where co.id_consorcio = " . $id . " order by p.fecha desc";
 
         try
         {
@@ -97,13 +101,14 @@ class Pagos extends Model
 
         $result = null;
 
-        $query = 
+        $query =
             "select p.uuid id, p.fecha, p.monto, p.comentario, t.uuid id_movimiento, ".
-            "t.movimiento, b.uuid id_banco, b.banco, p.estado ".
+            "t.movimiento, b.uuid id_banco, b.banco, ep.valor estado ".
             "from pagos p ".
             "left join tipos_movimiento t on p.tipo_movimiento = t.id ".
             "left join bancos b on p.id_banco = b.id ".
-            "where p.fecha BETWEEN CONCAT( YEAR( CURRENT_DATE ), CONCAT( '-', CONCAT( MONTH( CURRENT_DATE ) - 3 , CONCAT( '-', DAY(CURRENT_DATE()) ) ) ) ) AND CURRENT_DATE()  " .
+            "left join estadopagos ep on p.estado = ep.id ".
+            "where p.fecha BETWEEN CONCAT( YEAR( CURRENT_DATE ), CONCAT( '-', CONCAT( MONTH( CURRENT_DATE ) - 3 , CONCAT( '-', DAY(CURRENT_DATE()) ) ) ) ) AND CURRENT_DATE() ".
             "order by p.fecha desc";
 
         try

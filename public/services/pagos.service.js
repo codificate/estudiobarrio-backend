@@ -15,6 +15,7 @@
         service.Movimientos = Movimientos;
         service.EstadoPagos = EstadoPagos;
         service.LastCreated = LastCreated;
+        service.PagosByConsorcio = PagosByConsorcio;
         service.PagosByCopropietario = PagosByCopropietario;
         service.CopropietariosByConsorcio = CopropietariosByConsorcio;
 
@@ -59,11 +60,35 @@
             $http(req)
                 .then(
                     function successCallback(response){
+                        console.log( response );
                         callback(response);
                     },
                     function errorCallback(response){
                         callback(response);
                 });
+        }
+
+        function PagosByConsorcio( consorcioid, callback ){
+
+            var req = {
+                method: 'GET',
+                url: service.domain + 'api/pago/byconsorcio/' + consorcioid,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': $localStorage.currentUser.token
+                }
+            };
+
+            $http(req)
+                .then(
+                    function successCallback(response){
+                        console.log( response );
+                        callback(response);
+                    },
+                    function errorCallback(response){
+                        callback(response);
+                    });
         }
 
         function Bancos( callback ){
@@ -150,6 +175,7 @@
             $http(req).then(
 
                 function successCallback(response){
+                    console.log( response );
                     callback(response);
                 },
                 function errorCallback(response){

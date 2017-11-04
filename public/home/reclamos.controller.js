@@ -10,7 +10,7 @@
 
         vm.pager = {};
 
-        vm.criteriasselected = { tipo: null, estado: null, copropietario: null };
+        vm.criteriasselected = { tipo: null, estado: null, copropietario: null, consorcio: null };
 
         vm.reclamos = null;
         vm.reclamostmp = [];
@@ -34,6 +34,7 @@
         vm.getReclamosByTipoReclamo = getReclamosByTipoReclamo;
         vm.getEstadosReclamo = getEstadosReclamo;
         vm.goToNuevoReclamo = goToNuevoReclamo;
+        vm.getRecentlyCreated = getRecentlyCreated;
         vm.filterByCriteria = filterByCriteria;
         vm.getByConsorcio = getByConsorcio;
         vm.removeCriteria = removeCriteria;
@@ -60,7 +61,8 @@
         } */
 
         function setPage(page) {
-            if (page < 1 || page > vm.pager.totalPages) {
+            
+            if ( page < 1 ) {
                 return;
             }
 
@@ -71,11 +73,22 @@
             vm.reclamos = vm.reclamos.slice(vm.pager.startIndex, vm.pager.endIndex + 1);
         }
 
+        /**
+         * name: getByConsorcio
+         *
+         * Obtiene los reclamos según el consorcio (Edificio) seleccionado
+         *
+         * @param consorcioid
+         * @param consorcioname
+         */
+
         function getByConsorcio( consorcioid, consorcioname ){
 
             vm.loading = true;
             vm.consorciowasselected = true;
             vm.consorcioselected = consorcioname;
+
+            vm.criteriasselected.consorcio = consorcioname;
 
             ReclamosService.ByConsorcio( consorcioid, function (result) {
                 vm.reclamos = result.data;
@@ -89,17 +102,34 @@
             });
         }
 
+        /**
+         *
+         * name: getCopropietariosByConsorcio
+         *
+         * Obtiene el listado de copropietarios (Inquilinos) a partir del consorcio seleccionado
+         *
+         * @param consorcioid
+         */
+
         function getCopropietariosByConsorcio( consorcioid ) {
 
             ReclamosService.CopropietariosByConsorcio( consorcioid, function (result) {
 
-                vm.loading = false;
                 vm.copropietarios = result.data;
+                vm.loading = false;
 
             });
         }
 
-        function getReclamosByCopropietario( copropietarioid, copropietarioname ){
+        /**
+         * name: getReclamosByCopropietario
+         *
+         * Filtra los reclamos de acuerdo al nombre del copropietario seleccionado
+         *
+         * @param copropietarioname
+         */
+
+        function getReclamosByCopropietario( copropietarioname ){
             
             vm.copropietariowasselected = true;
             vm.copropietarioselected = copropietarioname;
@@ -113,6 +143,14 @@
             vm.setPage(1);
             
         }
+
+        /**
+         * name: getReclamosByTipoReclamo
+         *
+         * Filtra los reclamos de acuerdo al nombre del tipo de reclamo seleccionado
+         *
+         * @param nombre
+         */
 
         function getReclamosByTipoReclamo( nombre ) {
 
@@ -133,6 +171,14 @@
          * @param nombre
          */
 
+        /**
+         * name: getReclamosByEstadoReclamo
+         *
+         * Filtra los reclamos de acuerdo al nombre del estado de reclamo seleccionado
+         *
+         * @param nombre
+         */
+
         function getReclamosByEstadoReclamo( nombre ){
 
             vm.estadoselected = nombre;
@@ -145,6 +191,13 @@
             vm.setPage(1);
 
         }
+
+        /**
+         * name: getReclamosByEstadoReclamo
+         *
+         * Obtiene el listado de consorcios
+         *
+         */
 
         function getConsorcios(){
 
@@ -163,7 +216,14 @@
             }
 
         }
-        
+
+        /**
+         * name: getTiposReclamo
+         *
+         * Obtiene el listado de tipos de reclamo
+         *
+         */
+
         function getTiposReclamo() {
 
             if ( $localStorage.tiposreclamo ){
@@ -200,7 +260,7 @@
 
         }
 
-        function getRecentlyCreated(){
+        function getRecentlyCreated( forceFilter ){
 
             vm.loading = true;
 
@@ -209,6 +269,9 @@
                 vm.reclamos = result.data;
                 vm.reclamostmp = result.data;
                 vm.loading = false;
+
+                if ( forceFilter !== null && forceFilter )
+                    vm.filterByCriteria();
 
                 vm.setPage(1);
 
@@ -247,10 +310,25 @@
                 vm.estadowasselected = false;
             }
 
+            if ( vm.criteriasselected.copropietario == criteria ){
+                vm.criteriasselected.copropietario = null;
+                vm.copropietarioselected = null;
+                vm.copropietariowasselected = false;
+            }
+
+            if ( vm.criteriasselected.consorcio == criteria ){
+                vm.criteriasselected.consorcio = null;
+                vm.consorcioselected = null;
+                vm.consorciowasselected = false;
+
+                vm.getRecentlyCreated( true );
+                return;
+            }
+
             vm.filterByCriteria();
 
         }
-        
+
         function filterByCriteria() {
 
             var filtrados = [];
@@ -388,7 +466,7 @@
             }
 
             vm.reclamos = filtrados;
-            
+
         }
 
         function logout(){
