@@ -102,10 +102,11 @@ class Pagos extends Model
         $result = null;
 
         $query =
-            "select p.uuid id, p.fecha, p.monto, p.comentario, t.uuid id_movimiento, ".
+            "select p.uuid id, p.fecha, co.nombre, p.monto, p.comentario, t.uuid id_movimiento, ".
             "t.movimiento, b.uuid id_banco, b.banco, ep.valor estado ".
             "from pagos p ".
             "left join tipos_movimiento t on p.tipo_movimiento = t.id ".
+            "left join copropietarios co on p.id_copropietario = co.id " .
             "left join bancos b on p.id_banco = b.id ".
             "left join estadopagos ep on p.estado = ep.id ".
             "where p.fecha BETWEEN CONCAT( YEAR( CURRENT_DATE ), CONCAT( '-', CONCAT( MONTH( CURRENT_DATE ) - 3 , CONCAT( '-', DAY(CURRENT_DATE()) ) ) ) ) AND CURRENT_DATE() ".

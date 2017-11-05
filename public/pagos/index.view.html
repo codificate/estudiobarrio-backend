@@ -3,17 +3,6 @@
 <!-- ============================================================== -->
 <div id="main-wrapper" class="modal-demo">
 
-    <script type="text/ng-template" id="myModalContent.html">
-      <div class="modal-header">
-        <h3 class="modal-title" id="modal-title">I'm a modal!</h3>
-      </div>
-      <div class="modal-body" id="modal-body">
-        lo que venga
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-primary" type="button" ng-click="$ctrl.ok()">OK</button>
-      </div>
-    </script>
     <!-- ============================================================== -->
     <!-- Preloader - style you can find in spinners.css -->
     <!-- ============================================================== -->
@@ -242,6 +231,7 @@
                                     <thead>
                                         <tr>
                                             <th>Fecha</th>
+                                            <th>Copropietario</th>
                                             <th>Banco</th>
                                             <th>Comentario</th>
                                             <th>Estado</th>
@@ -252,6 +242,7 @@
                                     <tbody>
                                         <tr ng-repeat="x in vm.pagos">
                                             <td><div ng-click="vm.modalDetallePago(x)">{{x.fecha}}</div></td>
+                                            <td>{{x.nombre}}</td>
                                             <td>{{x.banco}}</td>
                                             <td>{{x.comentario}}</td>
                                             <td>{{x.estado}}</td>
@@ -361,3 +352,18 @@
     <!-- End Page wrapper  -->
     <!-- ============================================================== -->
 </div>
+
+<script type="text/ng-template" id="detallePago.html">
+    <div class="ngdialog-message">
+        <h2>Detalle del pago</h2>
+        <div>{{pago.nombre}}</div>
+        <ul class="mt">
+            <li>Fecha : {{pago.fecha}}</li>
+            <li>Banco : {{pago.banco}}</li>
+            <li>Estado : {{pago.estado}}</li>
+            <li>Monto : {{pago.monto}}</li>
+            <li>Movimiento : {{pago.movimiento}}</li>
+            <li>Comentario : {{pago.comentario}}</li>
+        </ul>
+    </div>
+</script>

@@ -5,7 +5,7 @@
         .module('app')
         .controller('Pagos.IndexController', Controller);
 
-    function Controller($uibModal, $location, $localStorage, PagosService  ) {
+    function Controller(ngDialog, $location, $localStorage, PagosService  ) {
         var vm = this;
 
         vm.pager = {};
@@ -542,9 +542,6 @@
 
             var pagosByCriteria = [];
 
-            console.log( vm.criteriasselected );
-            console.log( vm.pagostmp );
-
             if ( vm.pagostmp !== null ){
 
                 vm.pagostmp.forEach(function (tmp) {
@@ -700,19 +697,19 @@
 
         function modalDetallePago(pago) {
 
-          var modalInstance = $uibModal.open({
-            animation: true,
-            ariaLabelledBy: 'modal-title',
-            ariaDescribedBy: 'modal-body',
-            templateUrl: 'myModalContent.html',
-            controller: 'ModalInstanceCtrl',
-            controllerAs: '$ctrl',
-            resolve: {
-              detallepago: function () {
-                return pago;
-              }
-            }
-          });
+            ngDialog.open({
+                template: 'detallePago.html',
+                className: 'ngdialog-theme-default ngdialog-theme-custom',
+                resolve:{
+                    pago: function(){
+                        return pago;
+                    }
+                },
+                controller: function($scope,pago){
+                    $scope.pago = pago;
+                }
+
+            });
 
         }
 
@@ -785,15 +782,11 @@
         .module('app')
         .controller('ModalInstanceCtrl', ModalInstanceCtrl);
 
-    function ModalInstanceCtrl($uibModalInstance, detallepago) {
+    function ModalInstanceCtrl(detallepago) {
 
-      console.log( "Llego al modal" );
-      var $ctrl = this;
-      $ctrl.pago = detallepago;
-
-      $ctrl.ok = function () {
-        $uibModalInstance.close();
-      };
+        var $ctrl = this;
+        $ctrl.pago = detallepago;
+        console.log( detallepago );
 
     }
 

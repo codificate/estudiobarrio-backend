@@ -5,7 +5,7 @@
         .module('app')
         .controller('Home.IndexController', Controller);
 
-    function Controller($location, $localStorage, ReclamosService ) {
+    function Controller(ngDialog, $location, $localStorage, ReclamosService ) {
         var vm = this;
 
         vm.pager = {};
@@ -32,9 +32,10 @@
         vm.getReclamosByCopropietario = getReclamosByCopropietario;
         vm.getReclamosByEstadoReclamo = getReclamosByEstadoReclamo;
         vm.getReclamosByTipoReclamo = getReclamosByTipoReclamo;
+        vm.modalDetalleReclamo = modalDetalleReclamo;
+        vm.getRecentlyCreated = getRecentlyCreated;
         vm.getEstadosReclamo = getEstadosReclamo;
         vm.goToNuevoReclamo = goToNuevoReclamo;
-        vm.getRecentlyCreated = getRecentlyCreated;
         vm.filterByCriteria = filterByCriteria;
         vm.getByConsorcio = getByConsorcio;
         vm.removeCriteria = removeCriteria;
@@ -293,6 +294,24 @@
         function goToPagos(){
 
           $location.path('/pagos');
+
+        }
+
+        function modalDetalleReclamo(reclamo) {
+
+            ngDialog.open({
+                template: 'detalleReclamo.html',
+                className: 'ngdialog-theme-default ngdialog-theme-custom',
+                resolve:{
+                    reclamo: function(){
+                        return reclamo;
+                    }
+                },
+                controller: function($scope,reclamo){
+                    $scope.reclamo = reclamo;
+                }
+
+            });
 
         }
 

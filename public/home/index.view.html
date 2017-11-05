@@ -230,8 +230,7 @@
                                     <tbody>
                                         <tr ng-repeat="x in vm.reclamos" >
                                             <td>
-                                                <img src="assets/images/reclamos_photos.svg" ng-show="x.fotos != null" ng-click="vm.showPhotos()" />
-                                                {{x.fecha}}
+                                                <div ng-click="vm.modalDetalleReclamo(x)">{{x.fecha}}</div>
                                             </td>
                                             <td ng-show="vm.showcolumns">{{x.nombre}}</td>
                                             <td ng-show="vm.showcolumns">{{x.email}}</td>
@@ -343,3 +342,16 @@
     <!-- End Page wrapper  -->
     <!-- ============================================================== -->
 </div>
+
+<script type="text/ng-template" id="detalleReclamo.html">
+    <div class="ngdialog-message">
+        <h2>Detalle del reclamo</h2>
+        <div>{{reclamo.nombre}}</div>
+        <ul class="mt">
+            <li>Fecha : {{reclamo.fecha}}</li>
+            <li>Tipo : {{reclamo.tipo}}</li>
+            <li>Estado : {{reclamo.estado}}</li>
+            <li>Comentario : {{reclamo.descripcion}}</li>
+        </ul>
+    </div>
+</script>

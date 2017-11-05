@@ -74,7 +74,7 @@ class Reclamos extends Model
         $resutl = null;
 
         $query = 
-            "select re.id, re.uuid, re.fecha, tr.reclamo tipo, ".
+            "select re.id, re.uuid, DATE( re.fecha ) fecha, tr.reclamo tipo, ".
             "er.valor estado, re.infoAdicional descripcion ".
             "from reclamos re, copropietarios co, tipos_reclamo tr, estadoreclamos er ".
             "where re.id_copropietario = co.id and co.id = " . $copropietario . " and re.tipo_reclamo = tr.id ".
@@ -115,7 +115,7 @@ class Reclamos extends Model
     {
         $resutl = null;
 
-        $query = "select re.uuid id, re.fecha, con.nombre, tr.reclamo tipo, er.valor estado, ".
+        $query = "select re.uuid id, DATE( re.fecha ) fecha, con.nombre, tr.reclamo tipo, er.valor estado, ".
             "re.infoAdicional descripcion from ".
             "reclamos re, consorcios con, copropietarios co, tipos_reclamo tr, estadoreclamos er where ".
             "re.id_copropietario = co.id and re.id = " . $id. " and re.tipo_reclamo = tr.id and ".
@@ -138,7 +138,7 @@ class Reclamos extends Model
     {
         $result = null;
 
-        $query = " select re.uuid id, re.fecha, co.nombre, co.email, co.telefono, tr.reclamo tipo, er.valor estado,".
+        $query = " select re.uuid id, DATE( re.fecha ) fecha, co.nombre, co.email, co.telefono, tr.reclamo tipo, er.valor estado,".
             " re.infoAdicional descripcion from reclamos re ".
             " left join copropietarios co on re.id_copropietario = co.id " .
             " left join tipos_reclamo tr on re.tipo_reclamo = tr.id ".
@@ -162,7 +162,7 @@ class Reclamos extends Model
     {
         $result = null;
 
-        $query = " select re.uuid id, re.fecha, co.nombre, co.email, co.telefono, tr.reclamo tipo, er.valor estado,".
+        $query = " select re.uuid id, DATE( re.fecha ) fecha, co.nombre, co.email, co.telefono, tr.reclamo tipo, er.valor estado,".
             " re.infoAdicional descripcion from reclamos re ".
             " left join copropietarios co on re.id_copropietario = co.id " .
             " left join tipos_reclamo tr on re.tipo_reclamo = tr.id ".

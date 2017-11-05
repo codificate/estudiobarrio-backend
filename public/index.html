@@ -14,6 +14,8 @@
     <title>OneProp</title>
     <!-- Bootstrap Core CSS -->
     <link href="assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="node_modules/ng-dialog/css/ngDialog.min.css" rel="stylesheet" >
+    <link href="node_modules/ng-dialog/css/ngDialog-theme-default.min.css" rel="stylesheet" >
     <!-- Custom CSS -->
     <link href="assets/css/style.css" rel="stylesheet">
     <!-- You can change the theme colors from here -->
@@ -47,7 +49,7 @@
     <script src="node_modules/angular-animate/angular-animate.js"></script>
     <script src="node_modules/angular-touch/angular-touch.js"></script>
     <script src="node_modules/angular-sanitize/angular-sanitize.js"></script>
-    <script src="node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js"></script>
+    <script src="node_modules/ng-dialog/js/ngDialog.min.js"></script>
     <script src="node_modules/angular-ui-router/release/angular-ui-router.js"></script>
     <script src="node_modules/angular-messages/angular-messages.js"></script>
     <script src="node_modules/ngstorage/ngStorage.js"></script>
