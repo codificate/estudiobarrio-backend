@@ -20,6 +20,7 @@ Route::post('copropietario', 'CopropietariosController@signUp');
 Route::post('recuperarclave', 'CopropietariosController@forgotPassword');
 
 Route::post('reclamo/fotos', 'ReclamosController@savePhotos');
+Route::post('pago/adjunto', 'PagosController@saveComprobante');
 
 Route::group([ 'middleware' => 'auth:api' ], function () {
 
@@ -37,11 +38,13 @@ Route::group([ 'middleware' => 'auth:api' ], function () {
     Route::get('reclamo/byconsorcio/{uuid}', 'ReclamosController@byConsorcio');
     Route::get('reclamos/recientes', 'ReclamosController@getLastReclamosCreated');
     Route::get('reclamo/bycopropietario/{uuid}', 'ReclamosController@byCopropietario');
+    Route::put('reclamo/changeEstado/{reclamoid}/{estadoid}', 'ReclamosController@updateEstado');
 
     Route::post('pago', 'PagosController@save');
-    Route::get('pago/byconsorcio/{uuid}', 'PagosController@byConsorcio');
     Route::get('pago/recientes', 'PagosController@getLastPagosCreated');
+    Route::get('pago/byconsorcio/{uuid}', 'PagosController@byConsorcio');
     Route::get('pago/bycopropietario/{uuid}', 'PagosController@byCopropietario');
+    Route::put('pago/changeEstado/{pagoid}/{estadoid}', 'PagosController@updateEstado');
 
     Route::get('user/{uuid}', 'UserController@detail');
 

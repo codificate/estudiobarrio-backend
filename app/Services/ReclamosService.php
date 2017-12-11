@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\File\File;
 use App\Models\Estadoreclamos;
 use App\Models\Reclamos;
 use App\Models\Consorcios;
+use App\Models\Unidad;
 use App\Models\Copropietarios;
 use App\Models\Tiposreclamo;
 use App\Utils\Victorinox;
@@ -22,37 +23,37 @@ use Illuminate\Support\Facades\Storage;
 
 class ReclamosService
 {
-    
+
     public function add( $data )
     {
         try
         {
             $copropietario =  Copropietarios::all()->where( 'uuid', $data['copropietario'] )->first();
-            $consorcio =  Consorcios::all()->where( 'uuid', $data['consorcio'] )->first();
             $tipo =  Tiposreclamo::all()->where( 'uuid', $data['tipo'] )->first();
+            $unidad = Unidad::all()->where( 'uuid', $data['unidad'] )->first();
 
             if( ( $copropietario instanceof Copropietarios && $copropietario != null) &&
-                ( $consorcio instanceof Consorcios && $consorcio != null) &&
+                ( $unidad instanceof Unidad && $unidad != null) &&
                 ( $tipo instanceof Tiposreclamo && $tipo != null) )
             {
-                
+
                 $estadoreclamo = Estadoreclamos::all()->where('valor', 'Pendiente')->first();
-                
+
                 $reclamo = new Reclamos();
 
                 $reclamo->uuid = '';
                 $reclamo->id_copropietario = $copropietario->id;
                 $reclamo->tipo_reclamo = $tipo->id;
-                $reclamo->id_consorcio = $consorcio->id;
+                $reclamo->id_consorcio = $unidad->id_consorcio;
                 $reclamo->estado = $estadoreclamo->id;
                 $reclamo->infoAdicional = $data['detalle'];
 
                 if ( $reclamo->save() )
                 {
                     $reclamoguardado = Reclamos::ById( $reclamo->id)[0];
-                    
+
                     return ReclamoTransformer::nuevoReclamo( $reclamoguardado );
-                    
+
                 }
             }
         } catch (\Exception $e)
@@ -60,7 +61,7 @@ class ReclamosService
             return [ 'error' => $e->getMessage() ];
         }
     }
-    
+
     public function addPhotos( $data )
     {
         $reclamo = null;
@@ -138,7 +139,7 @@ class ReclamosService
         $byConsorcio = null;
 
         $consorcio = Consorcios::all()->where( 'uuid', '=', $uuid )->first();
-        
+
         if ( $consorcio instanceof Consorcios && $consorcio != null )
         {
             $byConsorcio = Reclamos::ByConsorcio( $consorcio->id );
@@ -160,10 +161,58 @@ class ReclamosService
 
         return $byCopropietario;
     }
-    
+
     public function getLastCreated()
     {
         return Reclamos::CreatedAtLastMonth();
+    }
+
+    public function chageEstadoReclamo( $reclamoid, $estadoid )
+    {
+        $reclamo = Reclamos::all()->where( 'uuid', $reclamoid )->first();
+        $estadoreclamo = Estadoreclamos::all()->where('uuid', $estadoid)->first();
+        $tipo =  Tiposreclamo::all()->where( 'id', $reclamo->tipo_reclamo )->first();
+        $fotos = FotosReclamos::all()->where( 'id_reclamo', $reclamo->id )->first();
+        $copropietario = Copropietarios::all()->where( 'id', '=', $reclamo->id_copropietario )->first();
+
+        $reclamo->estado = $estadoreclamo->id;
+
+        try
+        {
+
+          if ( $reclamo->save() )
+          {
+
+              $response = new \stdClass;
+
+              $response->uuid = $reclamo->uuid;
+
+              $explodeuuid = explode('-', $reclamo->uuid);
+              $response->id = substr( $explodeuuid[0], 2, strlen($explodeuuid[0]));
+
+              $response->estado = $estadoreclamo->valor;
+              $response->nombre = $copropietario->nombre;
+              $response->telefono = $copropietario->telefono;
+              $response->email = $copropietario->email;
+              $response->telefono = $copropietario->telefono;
+              $response->tipo = $tipo->reclamo;
+              $response->descripcion = $reclamo->infoAdicional;
+              $response->fecha = date_format( date_create( $reclamo->fecha ), 'Y-m-d' );
+
+              if ( $fotos instanceof FotosReclamos && $fotos != null )
+              {
+                  $response->fotos = [ $fotos->principal, $fotos->secundaria ];
+              }
+
+              return $response;
+          }
+
+        }
+        catch (Exception $e)
+        {
+            return [ 'error' => $e->getMessage() ];
+        }
+
     }
 
 }

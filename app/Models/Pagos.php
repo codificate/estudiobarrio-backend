@@ -24,7 +24,7 @@ class Pagos extends Model
     protected $fillable = [
         'uuid', 'id_copropietario', 'fecha',
         'id_banco', 'tipo_movimiento', 'monto',
-        'id_adjunto', 'comentario', 'estado'
+        'id_adjunto', 'id_unidad', 'comentario', 'estado'
     ];
 
 
@@ -43,12 +43,29 @@ class Pagos extends Model
         $this->attributes['uuid'] = Uuid::generate(4);
     }
 
+    public function rawQuery( $raw )
+    {
+        $pagos = [];
+
+        if ( is_array( $raw ) )
+        {
+            foreach ( $raw as $pago )
+            {
+                $explodeuuid = explode('-', $pago->uuid);
+                $pago->id = substr( $explodeuuid[0], 2, strlen($explodeuuid[0]));
+                array_push( $pagos, $pago );
+            }
+        }
+
+        return ( is_array( $pagos ) && !empty( $raw ) ) ? $pagos : $raw ;
+    }
+
     public function scopeByCopropietario( $query, $copropietario )
     {
 
         $result = null;
 
-        $query =    "select p.uuid id, p.fecha, p.monto, p.comentario, t.uuid id_movimiento, ".
+        $query =    "select p.id, p.uuid, p.fecha, p.monto, p.comentario, t.uuid id_movimiento, ".
                     "t.movimiento, b.uuid id_banco, b.banco, ep.valor estado ".
                     "from pagos p ".
                     "left join tipos_movimiento t on p.tipo_movimiento = t.id ".
@@ -59,7 +76,7 @@ class Pagos extends Model
         try
         {
 
-            $result = DB::select(DB::raw($query));
+            $result = $this->rawQuery( DB::select( DB::raw( $query ) ) );
 
         }catch (\Exception $e)
         {
@@ -73,7 +90,7 @@ class Pagos extends Model
     {
         $result = null;
 
-        $query ="select p.uuid id, p.fecha, p.comentario, co.nombre, co.email, co.telefono, t.uuid id_movimiento, ".
+        $query ="select p.id, p.uuid, p.fecha, p.comentario, co.nombre, co.email, co.telefono, t.uuid id_movimiento, ".
                 "t.movimiento, b.banco, p.monto, ep.valor estado ".
                 "from pagos p ".
                 "left join tipos_movimiento t on p.tipo_movimiento = t.id ".
@@ -85,7 +102,7 @@ class Pagos extends Model
         try
         {
 
-            $result = DB::select(DB::raw($query));
+            $result = $this->rawQuery( DB::select( DB::raw( $query ) ) );
 
         }
         catch (\Exception $e)
@@ -102,7 +119,7 @@ class Pagos extends Model
         $result = null;
 
         $query =
-            "select p.uuid id, p.fecha, co.nombre, p.monto, p.comentario, t.uuid id_movimiento, ".
+            "select p.id, p.uuid, p.fecha, co.nombre, p.monto, p.comentario, t.uuid id_movimiento, ".
             "t.movimiento, b.uuid id_banco, b.banco, ep.valor estado ".
             "from pagos p ".
             "left join tipos_movimiento t on p.tipo_movimiento = t.id ".
@@ -115,7 +132,7 @@ class Pagos extends Model
         try
         {
 
-            $result = DB::select(DB::raw($query));
+            $result = $this->rawQuery( DB::select( DB::raw( $query ) ) );
 
         }catch (\Exception $e)
         {

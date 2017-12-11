@@ -22,6 +22,20 @@ class PagosValidation
         $rules['banco']         = 'required';
         $rules['tipo']          = 'required';
         $rules['monto']         = 'required';
+        $rules['unidad']        = 'required';
+
+        $validator = Validator::make($data, $rules);
+        return $validator;
+    }
+
+    static function archivoValido( $data )
+    {
+        $rules = [];
+
+        $rules['pago'] = 'required';
+
+        if ( isset( $data['adjunto'] ) && $data[ 'adjunto' ] instanceof UploadedFile )
+            $rules['adjunto'] = 'required|mimes:pdf,jpg,png,jpeg,gif,svg|max:2048';
 
         $validator = Validator::make($data, $rules);
         return $validator;

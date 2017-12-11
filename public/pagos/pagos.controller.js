@@ -5,10 +5,8 @@
         .module('app')
         .controller('Pagos.IndexController', Controller);
 
-    function Controller(ngDialog, $location, $localStorage, PagosService  ) {
+    function Controller(SweetAlert, NgTableParams, ngDialog, $location, $localStorage, PagosService  ) {
         var vm = this;
-
-        vm.pager = {};
 
         vm.criteriasselected = { banco: null, movimiento: null, estado: null, copropietario: null, consorcio: null };
 
@@ -37,19 +35,19 @@
         vm.getPagosByCopropietario = getPagosByCopropietario;
         vm.getPagosByMovimiento = getPagosByMovimiento;
         vm.getPagosByConsorcio = getPagosByConsorcio;
+        vm.getRecentlyCreated = getRecentlyCreated;
+        vm.changeEstadoPago = changeEstadoPago;
         vm.getPagosByEstado = getPagosByEstado;
         vm.goToNuevoReclamo = goToNuevoReclamo;
         vm.filterByCriteria = filterByCriteria;
-        vm.getPagosByBanco = getPagosByBanco;
         vm.modalDetallePago = modalDetallePago;
+        vm.getPagosByBanco = getPagosByBanco;
         vm.getEstadosPago = getEstadosPago;
         vm.removeCriteria = removeCriteria;
         vm.getMovimientos = getMovimientos;
         vm.goToReclamos = goToReclamos;
         vm.goToPagos = goToPagos;
         vm.getBancos = getBancos;
-        vm.getPager = getPager;
-        vm.setPage = setPage;
         vm.logout = logout;
 
         getRecentlyCreated();
@@ -62,19 +60,6 @@
 
         getBancos();
 
-        function setPage(page) {
-
-            if ( page < 1 ) {
-                return;
-            }
-
-            // get pager object from service
-            vm.pager = vm.getPager(vm.pagos.length, page);
-
-            // get current page of items
-            vm.pagos = vm.pagos.slice(vm.pager.startIndex, vm.pager.endIndex + 1);
-        }
-
         function getPagosByConsorcio( consorcioid, consorcioname ) {
 
             vm.warning = "Esta consulta puede demorar un poco.";
@@ -84,10 +69,15 @@
             vm.consorcioselected = consorcioname;
             vm.criteriasselected.consorcio = consorcioname;
 
-            PagosService.PagosByConsorcio(consorcioid, function (result) {
+            PagosService.PagosByConsorcio(consorcioid, function (response) {
 
-                vm.pagos = result.data;
-                vm.pagostmp = result.data;
+                vm.pagos = response.data;
+                vm.pagostmp = response.data;
+                if ( vm.pagostmp instanceof Array || !isEmpty(vm.pagostmp) ){
+                  vm.tableParams = new NgTableParams({ count: 10, sorting: { fecha: "desc" } }, { dataset: vm.pagostmp });
+                } else {
+                vm.tableParams = new NgTableParams({ count: 10, sorting: { fecha: "desc" } }, { dataset: [] });
+                }
                 vm.getCopropietariosByConsorcio( consorcioid );
 
             });
@@ -99,8 +89,6 @@
           PagosService.CopropietariosByConsorcio( consorcioid, function (result) {
 
             vm.copropietarios = result.data;
-            vm.warning = null;
-            vm.filterByCriteria();
             vm.loading = false;
 
           });
@@ -181,6 +169,63 @@
 
         }
 
+        function changeEstadoPago( pagoid, estadoid ){
+
+          var response;
+          var iterador = 0;
+          var posicion = 0;
+
+          SweetAlert.swal({
+            title: "¿Estás seguro?",
+            text: "Cambiarás el estado del pago!",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "Si, por favor!",
+            cancelButtonText: "No, cancelar!",
+            closeOnConfirm: false,
+            closeOnCancel: false },
+            function(isConfirm){
+
+              if (isConfirm) {
+
+                PagosService.ChangeEstadoPago( pagoid, estadoid, function( result ){
+
+                  if ( !isEmpty( result ) ) {
+
+                      response = result;
+                      vm.pagostmp.forEach(function ( tmp ) {
+
+                          if ( !isEmpty(tmp) ) {
+
+                            if (  tmp.id == result.id  ) {
+
+                              posicion = iterador;
+
+                            }
+
+                            iterador++;
+
+                          }
+
+                      });
+
+                      vm.pagostmp[ posicion ] = response;
+                      vm.tableParams = new NgTableParams({ count: 10, sorting: { fecha: "desc" } }, { dataset: vm.pagostmp });
+                      SweetAlert.swal("Listo!", "Haz cambiado la informacion, sin tropiezos.", "success");
+
+                  }
+
+                });
+
+              } else {
+                SweetAlert.swal("Cancelado", "Por suerte no ha pasado nada :)", "error");
+              }
+
+          });
+
+        }
+
         function removeCriteria( criteria ){
 
             if ( vm.criteriasselected.banco == criteria ){
@@ -191,8 +236,8 @@
 
             if ( vm.criteriasselected.movimiento == criteria ){
                 vm.criteriasselected.movimiento = null;
-                vm.tiposelected = null;
-                vm.tipowasselected = false;
+                vm.movimientoselected = null;
+                vm.movimientowasselected = false;
             }
 
             if ( vm.criteriasselected.estado == criteria ){
@@ -229,8 +274,6 @@
 
             vm.filterByCriteria();
 
-            vm.setPage(1);
-
         }
 
         function getPagosByMovimiento( nombre ){
@@ -240,9 +283,6 @@
             vm.criteriasselected.movimiento = nombre;
 
             vm.filterByCriteria();
-
-            vm.setPage(1);
-
         }
 
         function getPagosByEstado( nombre ){
@@ -252,8 +292,6 @@
             vm.criteriasselected.estado = nombre;
 
             vm.filterByCriteria();
-
-            vm.setPage(1);
 
         }
 
@@ -288,7 +326,7 @@
                 if ( forceFilter !== null && forceFilter )
                     vm.filterByCriteria();
 
-                vm.setPage(1);
+                vm.tableParams = new NgTableParams({ count: 10, sorting: { fecha: "desc" } }, { dataset: vm.pagostmp });
 
             });
 
@@ -326,6 +364,7 @@
             else if ( ifEstadoMovimientoCopropietarioNotNull() ) { filtrados = findByEstadoMovimientoCopropietario() }
 
             vm.pagos = filtrados;
+            vm.tableParams = new NgTableParams({ count: 10, sorting: { fecha: "desc" } }, { dataset: vm.pagos });
 
         }
 
@@ -415,7 +454,7 @@
 
             var pagosByCriteria = [];
 
-            if ( vm.pagostmp !== null ){
+            if ( vm.pagostmp instanceof Array || !isEmpty(vm.pagostmp) ){
 
                 vm.pagostmp.forEach(function (tmp) {
 
@@ -446,7 +485,7 @@
 
             var pagosByCriteria = [];
 
-            if ( vm.pagostmp !== null ){
+            if ( vm.pagostmp instanceof Array || !isEmpty(vm.pagostmp) ){
 
                 vm.pagostmp.forEach(function (tmp) {
 
@@ -464,7 +503,7 @@
 
             var pagosByCriteria = [];
 
-            if ( vm.pagostmp !== null ){
+            if ( vm.pagostmp instanceof Array || !isEmpty(vm.pagostmp) ){
 
                 vm.pagostmp.forEach(function (tmp) {
 
@@ -482,7 +521,7 @@
 
             var pagosByCriteria = [];
 
-            if ( vm.pagostmp !== null ){
+            if ( vm.pagostmp instanceof Array || !isEmpty(vm.pagostmp) ){
 
                 vm.pagostmp.forEach(function (tmp) {
 
@@ -507,7 +546,7 @@
 
             var pagosByCriteria = [];
 
-            if ( vm.pagostmp !== null ){
+            if ( vm.pagostmp instanceof Array || !isEmpty(vm.pagostmp) ){
 
                 vm.pagostmp.forEach(function (tmp) {
 
@@ -525,7 +564,7 @@
 
             var pagosByCriteria = [];
 
-            if ( vm.pagostmp !== null ){
+            if ( vm.pagostmp instanceof Array || !isEmpty(vm.pagostmp) ){
 
                 vm.pagostmp.forEach(function (tmp) {
 
@@ -542,7 +581,7 @@
 
             var pagosByCriteria = [];
 
-            if ( vm.pagostmp !== null ){
+            if ( vm.pagostmp instanceof Array || !isEmpty(vm.pagostmp) ){
 
                 vm.pagostmp.forEach(function (tmp) {
 
@@ -559,7 +598,7 @@
 
             var pagosByCriteria = [];
 
-            if ( vm.pagostmp !== null ){
+            if ( vm.pagostmp instanceof Array || !isEmpty(vm.pagostmp) ){
 
                 vm.pagostmp.forEach(function (tmp) {
 
@@ -576,7 +615,7 @@
 
             var pagosByCriteria = [];
 
-            if ( vm.pagostmp !== null ){
+            if ( vm.pagostmp instanceof Array || !isEmpty(vm.pagostmp) ){
 
                 vm.pagostmp.forEach(function (tmp) {
 
@@ -589,11 +628,19 @@
             return pagosByCriteria;
         }
 
+        function isEmpty(obj) {
+          for(var key in obj) {
+            if(obj.hasOwnProperty(key))
+              return false;
+            }
+          return true;
+        }
+
         function findByCopropietario() {
 
             var pagosByCriteria = [];
 
-            if ( vm.pagostmp !== null ){
+            if ( vm.pagostmp instanceof Array || !isEmpty(vm.pagostmp) ){
 
                 vm.pagostmp.forEach(function (tmp) {
 
@@ -610,7 +657,7 @@
 
             var pagosByCriteria = [];
 
-            if ( vm.pagostmp !== null ){
+            if ( vm.pagostmp instanceof Array || !isEmpty(vm.pagostmp) ){
 
                 vm.pagostmp.forEach(function (tmp) {
 
@@ -628,7 +675,7 @@
 
             var pagosByCriteria = [];
 
-            if ( vm.pagostmp !== null ){
+            if ( vm.pagostmp instanceof Array || !isEmpty(vm.pagostmp) ){
 
                 vm.pagostmp.forEach(function (tmp) {
 
@@ -646,7 +693,7 @@
 
             var pagosByCriteria = [];
 
-            if ( vm.pagostmp !== null ){
+            if ( vm.pagostmp instanceof Array || !isEmpty(vm.pagostmp) ){
 
                 vm.pagostmp.forEach(function (tmp) {
 
@@ -664,7 +711,7 @@
 
             var pagosByCriteria = [];
 
-            if ( vm.pagostmp !== null ){
+            if ( vm.pagostmp instanceof Array || !isEmpty(vm.pagostmp) ){
 
                 vm.pagostmp.forEach(function (tmp) {
 
@@ -682,7 +729,7 @@
 
             var pagosByCriteria = [];
 
-            if ( vm.pagostmp !== null ){
+            if ( vm.pagostmp instanceof Array || !isEmpty(vm.pagostmp) ){
 
                 vm.pagostmp.forEach(function (tmp) {
 
@@ -713,63 +760,7 @@
 
         }
 
-        /**
-         *
-         * @param totalItems
-         * @param currentPage
-         * @param pageSize
-         * @returns {{totalItems: *, currentPage: (*|number), pageSize: (*|number), totalPages: number, startPage: *, endPage: *, startIndex: number, endIndex: number, pages: *}}
-         */
-
-        function getPager(totalItems, currentPage, pageSize) {
-            // default to first page
-            currentPage = currentPage || 1;
-
-            // default page size is 10
-            pageSize = pageSize || 10;
-
-            // calculate total pages
-            var totalPages = Math.ceil(totalItems / pageSize);
-
-            var startPage, endPage;
-            if (totalPages <= 10) {
-                // less than 10 total pages so show all
-                startPage = 1;
-                endPage = totalPages;
-            } else {
-                // more than 10 total pages so calculate start and end pages
-                if (currentPage <= 6) {
-                    startPage = 1;
-                    endPage = 10;
-                } else if (currentPage + 4 >= totalPages) {
-                    startPage = totalPages - 9;
-                    endPage = totalPages;
-                } else {
-                    startPage = currentPage - 5;
-                    endPage = currentPage + 4;
-                }
-            }
-
-            // calculate start and end item indexes
-            var startIndex = (currentPage - 1) * pageSize;
-            var endIndex = Math.min(startIndex + pageSize - 1, totalItems - 1);
-
-            // create an array of pages to ng-repeat in the pager control
-            var pages = _.range(startPage, endPage + 1);
-
-            // return object with all pager properties required by the view
-            return {
-                totalItems: totalItems,
-                currentPage: currentPage,
-                pageSize: pageSize,
-                totalPages: totalPages,
-                startPage: startPage,
-                endPage: endPage,
-                startIndex: startIndex,
-                endIndex: endIndex,
-                pages: pages
-            };
-        }
+        vm.tableParams = new NgTableParams({ count: 10, sorting: { fecha: "desc" } }, { dataset: vm.pagostmp });
 
     }
 

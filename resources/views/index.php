@@ -16,16 +16,36 @@
     <link href="assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="node_modules/ng-dialog/css/ngDialog.min.css" rel="stylesheet" >
     <link href="node_modules/ng-dialog/css/ngDialog-theme-default.min.css" rel="stylesheet" >
+    <link href="node_modules/ng-table/bundles/ng-table.min.css" rel="stylesheet">
     <!-- Custom CSS -->
     <link href="assets/css/style.css" rel="stylesheet">
     <!-- You can change the theme colors from here -->
     <link href="assets/css/colors/default-dark.css" id="theme" rel="stylesheet">
+    <link href="node_modules/angular-material/angular-material.min.css" rel="stylesheet" >
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="node_modules/angular-jk-carousel/dist/jk-carousel.min.css" rel="stylesheet" >
+    <link href="node_modules/sweetalert/lib/sweet-alert.css" rel="stylesheet" type="text/css">
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
     <script src="assets/js/html5shiv.js"></script>
     <script src="assets/js/respond.min.js"></script>
     <![endif]-->
+
+    <style type="text/css">
+      .detail .detailicon{ opacity: 0; }
+      .detail:hover .detailicon{
+        opacity: 1;
+        cursor: pointer;
+        display: inline-block;
+      }
+      md-card {
+        margin: auto;
+        left: 0;
+        right: 0;
+        margin-bottom: 20px;
+      }
+    </style>
 
 </head>
 
@@ -54,6 +74,13 @@
     <script src="node_modules/angular-messages/angular-messages.js"></script>
     <script src="node_modules/ngstorage/ngStorage.js"></script>
     <script src="node_modules/lodash/lodash.js"></script>
+    <script src="node_modules/angular-aria/angular-aria.min.js"></script>
+    <script src="node_modules/angular-material/angular-material.min.js"></script>
+    <script src="node_modules/angular-jk-carousel/dist/jk-carousel.min.js"></script>
+    <script src="node_modules/ng-table/bundles/ng-table.min.js"></script>
+    <script src="node_modules/angular-sweetalert/SweetAlert.min.js"></script>
+    <script src="node_modules/sweetalert/lib/sweet-alert.min.js"></script>
+
 
     <!-- application scripts -->
     <script src="app.js"></script>

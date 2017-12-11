@@ -37,11 +37,11 @@ class ReclamosController extends Controller
                 return $general->responseSuccessAPI( $response );
         }
     }
-    
+
     public function savePhotos(Request $request)
     {
         $fotossubidas = [];
-        
+
         $data = $request->all();
         $general = new General();
         $service = new ReclamosService();
@@ -64,7 +64,7 @@ class ReclamosController extends Controller
             }
         }
     }
-    
+
     public function byConsorcio( Request $request, $uuid )
     {
         $general = new General();
@@ -108,6 +108,23 @@ class ReclamosController extends Controller
 
         return $general->responseSuccessAPI( $service->getLastCreated() );
 
+    }
+
+    public function updateEstado( Request $request, $reclamoid, $estadoid )
+    {
+        $general = new General();
+        $service = new ReclamosService();
+
+        $change = $service->chageEstadoReclamo( $reclamoid, $estadoid );
+
+        if ( !is_array( $change ) )
+        {
+            return $general->responseSuccessAPI( $change );
+        }
+        else
+        {
+            return $general->responseErrorAPI( "Algo ha salido mal", 500 );
+        }
     }
 
 }

@@ -39,6 +39,29 @@ class PagosController
         }
     }
 
+    public function saveComprobante(Request $request)
+    {
+
+        $data = $request->all();
+        $general = new General();
+        $service = new PagosService();
+
+        $validator = PagosValidation::archivoValido( $data );
+
+        if ( $validator->fails() )
+            return $general->responseErrorAPI( $validator );
+        else
+        {
+            $comprobante = $service->addComprobanteDePago( $data );
+
+            if ( is_array( $comprobante ) && key_exists('error', $comprobante ) )
+                return $general->responseErrorAPI( $comprobante['error'] );
+            else
+                return $general->responseSuccessAPI( $comprobante );
+        }
+
+    }
+
     public function byConsorcio( Request $request, $uuid )
     {
         $general = new General();
@@ -64,6 +87,23 @@ class PagosController
 
         return $general->responseSuccessAPI( $service->getLastCreated() );
 
+    }
+
+    public function updateEstado( Request $request, $pagoid, $estadoid )
+    {
+        $general = new General();
+        $service = new PagosService();
+
+        $change = $service->chageEstadoPago( $pagoid, $estadoid );
+
+        if ( !is_array( $change ) )
+        {
+            return $general->responseSuccessAPI( $change );
+        }
+        else
+        {
+            return $general->responseErrorAPI( "Algo ha salido mal", 500 );
+        }
     }
 
 }

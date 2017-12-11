@@ -213,53 +213,46 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-block">
-                            <div class="table-responsive m-t-40">
+                            <div class="table-responsive m-t-20">
 
-                                <table id="tablereclamoslist" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
-                                    <thead>
-                                        <tr>
-                                            <th>Fecha</th>
-                                            <th ng-show="vm.showcolumns">Copropietario</th>
-                                            <th ng-show="vm.showcolumns">Email</th>
-                                            <th ng-show="vm.showcolumns">Telefono</th>
-                                            <th>Tipo</th>
-                                            <th>Estado</th>
-                                            <th>Descripcion</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr ng-repeat="x in vm.reclamos" >
-                                            <td>
-                                                <div ng-click="vm.modalDetalleReclamo(x)">{{x.fecha}}</div>
-                                            </td>
-                                            <td ng-show="vm.showcolumns">{{x.nombre}}</td>
-                                            <td ng-show="vm.showcolumns">{{x.email}}</td>
-                                            <td ng-show="vm.showcolumns">{{x.telefono}}</td>
-                                            <td>{{x.tipo}}</td>
-                                            <td>{{x.estado}}</td>
-                                            <td>{{x.descripcion}}</td>
-                                        </tr>
-                                    </tbody>
+                                <table ng-table="vm.tableParams" class="table table-condensed table-bordered table-striped">
+                                    <tr ng-repeat="x in $data" >
+                                        <td data-title="'Id'">{{x.id}}</td>
+                                        <td data-title="'Fecha'" sortable="'fecha'">
+                                            <div class="detail" ng-click="vm.modalDetalleReclamo(x)">
+                                              <img class="detailicon" src="assets/images/eye.svg">
+                                              <p>{{x.fecha}}</p>
+                                            </div>
+                                        </td>
+                                        <td data-title="'Copropietario'">{{x.nombre}}</td>
+                                        <td data-title="'Email'">{{x.email}}</td>
+                                        <td data-title="'Telefono'">{{x.telefono}}</td>
+                                        <td data-title="'Tipo'" sortable="'tipo'">{{x.tipo}}</td>
+                                        <td data-title="'Estado'" sortable="'estado'">
+
+                                              <div class="dropdown hidden-sm-down">
+                                                  <button
+                                                    class="btn btn-secondary dropdown-toggle"
+                                                    type="button" id="dropdownChangeEstadoReclamoButton"
+                                                    data-toggle="dropdown"
+                                                    aria-haspopup="true"
+                                                    aria-expanded="false">
+                                                    {{x.estado}}
+                                                  </button>
+                                                  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+
+                                                      <div ng-repeat="estadoreclamo in vm.estadosreclamo" >
+
+                                                          <a class="dropdown-item" ng-click="vm.changeEstadoReclamo( x.id, estadoreclamo.id )" ng-show="estadoreclamo.nombre != null">{{ estadoreclamo.nombre }}</a>
+
+                                                      </div>
+
+                                                  </div>
+                                              </div>
+                                        </td>
+                                        <td data-title="'Descripcion'">{{x.descripcion}}</td>
+                                    </tr>
                                 </table>
-
-                                <!-- pager -->
-                                <ul ng-if="vm.pager.pages.length" class="pagination">
-                                    <li ng-class="{disabled:vm.pager.currentPage === 1}">
-                                        <a ng-click="vm.setPage(1)">First</a>
-                                    </li>
-                                    <li ng-class="{disabled:vm.pager.currentPage === 1}">
-                                        <a ng-click="vm.setPage(vm.pager.currentPage - 1)">Previous</a>
-                                    </li>
-                                    <li ng-repeat="page in vm.pager.pages" ng-class="{active:vm.pager.currentPage === page}">
-                                        <a ng-click="vm.setPage(page)">{{page}}</a>
-                                    </li>
-                                    <li ng-class="{disabled:vm.pager.currentPage === vm.pager.totalPages}">
-                                        <a ng-click="vm.setPage(vm.pager.currentPage + 1)">Next</a>
-                                    </li>
-                                    <li ng-class="{disabled:vm.pager.currentPage === vm.pager.totalPages}">
-                                        <a ng-click="vm.setPage(vm.pager.totalPages)">Last</a>
-                                    </li>
-                                </ul>
 
                             </div>
                         </div>
@@ -353,5 +346,17 @@
             <li>Estado : {{reclamo.estado}}</li>
             <li>Comentario : {{reclamo.descripcion}}</li>
         </ul>
+        <md-card ng-show="reclamo.fotos !== null" layout="column" layout-align="center center" style="padding-bottom: 10px" >
+          <h3>Fotos:</h3>
+          <jk-carousel
+            data="dataArray"
+            current-index="0"
+            item-template-url="'item-foto.html'"
+            max-width="800"
+            max-height="500"
+            auto-slide="false"
+            auto-slide-time="2000" >
+          </jk-carousel>
+        </md-card>
     </div>
 </script>

@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Copropietarios extends Model
 {
-    
+
 
     /**
      * The attributes that are mass assignable.
@@ -23,7 +23,8 @@ class Copropietarios extends Model
      */
     protected $fillable = [
         'id_consorcio', 'uuid', 'UF', 'piso', 'departamento',
-        'nombre', 'password', 'email', 'telefono', 'keepLogged','activation_key', 'id_estado'
+        'nombre', 'password', 'email', 'telefono', 'keepLogged','activation_key',
+        'id_estado', 'tipocopropietario'
     ];
 
 

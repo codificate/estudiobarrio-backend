@@ -15,6 +15,7 @@
         service.Movimientos = Movimientos;
         service.EstadoPagos = EstadoPagos;
         service.LastCreated = LastCreated;
+        service.ChangeEstadoPago = ChangeEstadoPago;
         service.PagosByConsorcio = PagosByConsorcio;
         service.PagosByCopropietario = PagosByCopropietario;
         service.CopropietariosByConsorcio = CopropietariosByConsorcio;
@@ -37,10 +38,12 @@
                 .then(
 
                     function successCallback(response){
+                        console.log( response );
                         callback(response);
                     },
 
                     function errorCallback(response){
+                        console.log( response );
                         callback(response);
                     });
         }
@@ -64,6 +67,7 @@
                         callback(response);
                     },
                     function errorCallback(response){
+                        console.log( response );
                         callback(response);
                 });
         }
@@ -87,6 +91,7 @@
                         callback(response);
                     },
                     function errorCallback(response){
+                        console.log( response );
                         callback(response);
                     });
         }
@@ -106,10 +111,12 @@
             $http(req)
                 .then(
                     function successCallback(response){
+                        console.log( response );
                         $localStorage.bancos = response.data;
                         callback(response);
                     },
                     function errorCallback(response){
+                        console.log( response );
                         callback(response);
                     });
         }
@@ -129,10 +136,12 @@
             $http(req)
                 .then(
                     function successCallback(response){
-                        $localStorage.movimientos = response.data;
+                        console.log( response );
+                        $localStorage.estadopagos = response.data;
                         callback(response);
                     },
                     function errorCallback(response){
+                        console.log( response );
                         callback(response);
                     });
         }
@@ -152,10 +161,12 @@
             $http(req)
                 .then(
                     function successCallback(response){
+                        console.log( response );
                         $localStorage.movimientos = response.data;
                         callback(response);
                     },
                     function errorCallback(response){
+                        console.log( response );
                         callback(response);
                     });
         }
@@ -179,6 +190,32 @@
                     callback(response);
                 },
                 function errorCallback(response){
+                    console.log( response );
+                    callback(response);
+                }
+            );
+        }
+
+        function ChangeEstadoPago( pagoid, estadoid, callback ){
+
+            var req = {
+                method: 'PUT',
+                url: service.domain + 'api/pago/changeEstado/' + pagoid + '/' + estadoid,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': $localStorage.currentUser.token
+                }
+            };
+
+            $http(req).then(
+
+                function successCallback(response){
+                    callback(response.data);
+                },
+
+                function errorCallback(response){
+                    console.log(response);
                     callback(response);
                 }
             );

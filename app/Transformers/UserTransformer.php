@@ -63,7 +63,7 @@ class UserTransformer
         return $response;
     }
 
-    public static function detallecopropietario( $usuario, $copropietario, $consorcio, $reclamos, $pagos )
+    public static function nuevocopropietario( $usuario, $copropietario, $unidades, $tiposcopropietario )
     {
         $response = new \stdClass;
 
@@ -72,15 +72,31 @@ class UserTransformer
         $response->rol = $usuario->id_rol;
         $response->nombre = $usuario->name;
         $response->email = $usuario->email;
-        $response->piso = $copropietario->piso;
-        $response->departamento = $copropietario->departamento;
+        $response->telefono = $copropietario->telefono;
+        $response->tipocopropietario = $tiposcopropietario->nombre;
+
+        if ( $unidades != null )
+        {
+            $response->unidades = $unidades;
+        }
+
+        $response->token = $usuario->access_token;
+
+        return $response;
+    }
+
+    public static function detallecopropietario( $usuario, $copropietario, $unidades, $reclamos, $pagos )
+    {
+        $response = new \stdClass;
+
+        $response->id = $copropietario->uuid;
+        $response->id_usuario = $usuario->uuid;
+        $response->rol = $usuario->id_rol;
+        $response->nombre = $usuario->name;
+        $response->email = $usuario->email;
         $response->telefono = $copropietario->telefono;
 
-        if ( $consorcio != null )
-        {
-            $response->id_consorcio = $consorcio->uuid;
-            $response->consorcio = $consorcio->nombre;
-        }
+        if ( $unidades != null ) { $response->unidades = $unidades; }
 
         if ( is_array( $reclamos ) && $reclamos != null )
             $response->reclamos = $reclamos;

@@ -5,10 +5,8 @@
         .module('app')
         .controller('Home.IndexController', Controller);
 
-    function Controller(ngDialog, $location, $localStorage, ReclamosService ) {
+    function Controller(SweetAlert, NgTableParams, ngDialog, $location, $localStorage, ReclamosService ) {
         var vm = this;
-
-        vm.pager = {};
 
         vm.criteriasselected = { tipo: null, estado: null, copropietario: null, consorcio: null };
 
@@ -32,6 +30,7 @@
         vm.getReclamosByCopropietario = getReclamosByCopropietario;
         vm.getReclamosByEstadoReclamo = getReclamosByEstadoReclamo;
         vm.getReclamosByTipoReclamo = getReclamosByTipoReclamo;
+        vm.changeEstadoReclamo = changeEstadoReclamo;
         vm.modalDetalleReclamo = modalDetalleReclamo;
         vm.getRecentlyCreated = getRecentlyCreated;
         vm.getEstadosReclamo = getEstadosReclamo;
@@ -42,8 +41,6 @@
         vm.getConsorcios = getConsorcios;
         vm.goToReclamos = goToReclamos;
         vm.goToPagos = goToPagos;
-        vm.getPager = getPager;
-        vm.setPage = setPage;
         vm.logout = logout;
 
         getRecentlyCreated();
@@ -53,26 +50,6 @@
         getTiposReclamo();
 
         getEstadosReclamo();
-
-        //initController();
-
-        /* function initController() {
-            // initialize to page 1
-            vm.setPage(1);
-        } */
-
-        function setPage(page) {
-            
-            if ( page < 1 ) {
-                return;
-            }
-
-            // get pager object from service
-            vm.pager = vm.getPager(vm.reclamos.length, page);
-
-            // get current page of items
-            vm.reclamos = vm.reclamos.slice(vm.pager.startIndex, vm.pager.endIndex + 1);
-        }
 
         /**
          * name: getByConsorcio
@@ -91,15 +68,19 @@
 
             vm.criteriasselected.consorcio = consorcioname;
 
-            ReclamosService.ByConsorcio( consorcioid, function (result) {
-                vm.reclamos = result.data;
-                vm.reclamostmp = result.data;
+            ReclamosService.ByConsorcio( consorcioid, function (response) {
+                vm.reclamos = response.data;
+                vm.reclamostmp = response.data;
 
-                vm.filterByCriteria();
+                if ( !vm.reclamostmp instanceof Array || isEmpty(vm.reclamostmp) ){
+                  vm.reclamos = [];
+                  vm.reclamostmp = [];
+                } else {
+                  vm.filterByCriteria();
+                }
 
                 getCopropietariosByConsorcio( consorcioid );
 
-                vm.setPage(1);
             });
         }
 
@@ -131,18 +112,16 @@
          */
 
         function getReclamosByCopropietario( copropietarioname ){
-            
+
             vm.copropietariowasselected = true;
             vm.copropietarioselected = copropietarioname;
-            
+
             vm.showcolumns = false;
 
             vm.criteriasselected.copropietario = copropietarioname;
 
             vm.filterByCriteria();
 
-            vm.setPage(1);
-            
         }
 
         /**
@@ -162,15 +141,7 @@
 
             vm.filterByCriteria();
 
-            vm.setPage(1);
-
         }
-
-        /**
-         * +54 9 11 2653-5442 Maggie
-         * +54 9 11 3626 7522 Candy
-         * @param nombre
-         */
 
         /**
          * name: getReclamosByEstadoReclamo
@@ -189,7 +160,62 @@
 
             vm.filterByCriteria();
 
-            vm.setPage(1);
+        }
+
+        function changeEstadoReclamo( reclamoid, estadoid ){
+
+          var response;
+          var iterador = 0;
+          var posicion = 0;
+
+          SweetAlert.swal({
+            title: "¿Estás seguro?",
+            text: "Cambiarás el estado del reclamo!",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "Si, por favor!",
+            cancelButtonText: "No, cancelar!",
+            closeOnConfirm: false,
+            closeOnCancel: false },
+            function(isConfirm){
+
+              if (isConfirm) {
+
+                ReclamosService.ChangeEstadoReclamo( reclamoid, estadoid, function( result ){
+
+                  if ( !isEmpty( result ) ) {
+
+                      response = result;
+                      vm.reclamostmp.forEach(function ( tmp ) {
+
+                          if ( !isEmpty(tmp) ) {
+
+                            if (  tmp.id == result.id  ) {
+
+                              posicion = iterador;
+
+                            }
+
+                            iterador++;
+
+                          }
+
+                      });
+
+                      vm.reclamostmp[ posicion ] = response;
+                      vm.tableParams = new NgTableParams({ count: 10, sorting: { fecha: "desc" } }, { dataset: vm.reclamostmp });
+                      SweetAlert.swal("Listo!", "Haz cambiado la informacion, sin tropiezos.", "success");
+
+                  }
+
+                });
+
+              } else {
+                SweetAlert.swal("Cancelado", "Por suerte no ha pasado nada :)", "error");
+              }
+
+          });
 
         }
 
@@ -274,7 +300,7 @@
                 if ( forceFilter !== null && forceFilter )
                     vm.filterByCriteria();
 
-                vm.setPage(1);
+                vm.tableParams = new NgTableParams({ count: 10, sorting: { fecha: "desc" } }, { dataset: vm.reclamostmp });
 
             });
         }
@@ -308,7 +334,15 @@
                     }
                 },
                 controller: function($scope,reclamo){
+                    $scope.dataArray = [];
                     $scope.reclamo = reclamo;
+                    if ( $scope.reclamo.fotos !== null ) {
+
+                      $scope.reclamo.fotos.forEach(function ( foto ) {
+                          $scope.dataArray.push( { src: "http://estudiobarrio.plexarg.com/public/" + reclamo.uuid + "/" + foto } );
+                      });
+
+                    }
                 }
 
             });
@@ -348,6 +382,14 @@
 
         }
 
+        function isEmpty(obj) {
+          for(var key in obj) {
+            if(obj.hasOwnProperty(key))
+              return false;
+            }
+          return true;
+        }
+
         function filterByCriteria() {
 
             var filtrados = [];
@@ -358,7 +400,7 @@
                  * Busqueda sin filtros
                  */
 
-                if ( vm.reclamostmp !== null ){
+                if ( vm.reclamostmp instanceof Array || !isEmpty(vm.reclamostmp) ){
 
                     vm.reclamostmp.forEach(function ( tmp ) {
 
@@ -373,7 +415,7 @@
                  * Busqueda por: Tipo, Estado & Copropietario
                  */
 
-                if ( vm.reclamostmp !== null ){
+                if ( vm.reclamostmp instanceof Array || !isEmpty(vm.reclamostmp) ){
 
                     vm.reclamostmp.forEach(function (tmp) {
 
@@ -394,7 +436,7 @@
                  * Busqueda por: Tipo & Estado
                  */
 
-                if ( vm.reclamostmp !== null ){
+                if ( vm.reclamostmp instanceof Array || !isEmpty(vm.reclamostmp) ){
 
                     vm.reclamostmp.forEach(function (tmp) {
 
@@ -410,7 +452,7 @@
                  * Busqueda por: Tipo
                  */
 
-                if ( vm.reclamostmp !== null ){
+                if ( vm.reclamostmp instanceof Array || !isEmpty(vm.reclamostmp) ){
 
                     vm.reclamostmp.forEach(function (tmp) {
 
@@ -426,7 +468,7 @@
                  * Busqueda por: Estado
                  */
 
-                if ( vm.reclamostmp !== null ){
+                if ( vm.reclamostmp instanceof Array || !isEmpty(vm.reclamostmp) ){
 
                     vm.reclamostmp.forEach(function (tmp) {
 
@@ -442,7 +484,7 @@
                  * Busqueda por: Copropietario
                  */
 
-                if ( vm.reclamostmp !== null ){
+                if ( vm.reclamostmp instanceof Array || !isEmpty(vm.reclamostmp) ){
 
                     vm.reclamostmp.forEach(function (tmp) {
 
@@ -458,7 +500,7 @@
                  * Busqueda por: Estado & Copropietario
                  */
 
-                if ( vm.reclamostmp !== null ){
+                if ( vm.reclamostmp instanceof Array || !isEmpty(vm.reclamostmp) ){
 
                     vm.reclamostmp.forEach(function (tmp) {
 
@@ -473,7 +515,7 @@
                  * Busqueda por: Tipo & Copropietario
                  */
 
-                if ( vm.reclamostmp !== null ){
+                if ( vm.reclamostmp instanceof Array || !isEmpty(vm.reclamostmp) ){
 
                     vm.reclamostmp.forEach(function (tmp) {
 
@@ -486,6 +528,8 @@
 
             vm.reclamos = filtrados;
 
+            vm.tableParams = new NgTableParams({ count: 10, sorting: { fecha: "desc" } }, { dataset: vm.reclamos });
+
         }
 
         function logout(){
@@ -497,55 +541,8 @@
             $location.path('/login');
         }
 
-        function getPager(totalItems, currentPage, pageSize) {
-            // default to first page
-            currentPage = currentPage || 1;
+        vm.tableParams = new NgTableParams({ count: 10, sorting: { fecha: "desc" } }, { dataset: vm.reclamostmp });
 
-            // default page size is 10
-            pageSize = pageSize || 10;
-
-            // calculate total pages
-            var totalPages = Math.ceil(totalItems / pageSize);
-
-            var startPage, endPage;
-            if (totalPages <= 10) {
-                // less than 10 total pages so show all
-                startPage = 1;
-                endPage = totalPages;
-            } else {
-                // more than 10 total pages so calculate start and end pages
-                if (currentPage <= 6) {
-                    startPage = 1;
-                    endPage = 10;
-                } else if (currentPage + 4 >= totalPages) {
-                    startPage = totalPages - 9;
-                    endPage = totalPages;
-                } else {
-                    startPage = currentPage - 5;
-                    endPage = currentPage + 4;
-                }
-            }
-
-            // calculate start and end item indexes
-            var startIndex = (currentPage - 1) * pageSize;
-            var endIndex = Math.min(startIndex + pageSize - 1, totalItems - 1);
-
-            // create an array of pages to ng-repeat in the pager control
-            var pages = _.range(startPage, endPage + 1);
-
-            // return object with all pager properties required by the view
-            return {
-                totalItems: totalItems,
-                currentPage: currentPage,
-                pageSize: pageSize,
-                totalPages: totalPages,
-                startPage: startPage,
-                endPage: endPage,
-                startIndex: startIndex,
-                endIndex: endIndex,
-                pages: pages
-            };
-        }
     }
 
 })();

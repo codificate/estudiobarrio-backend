@@ -33,7 +33,7 @@
             $http(req)
                 .then(
                     function successCallback(response){
-
+                        console.log(response);
                         if ( typeof( response.data.id ) !== "undefined" ) {
                             $localStorage.currentUser = response.data;
                         }
@@ -41,6 +41,7 @@
                     },
 
                     function errorCallback(response){
+                        console.log(response);
                         callback(false);
                         Logout();
                     });

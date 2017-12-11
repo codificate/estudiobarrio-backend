@@ -27,15 +27,14 @@ class UsuariosValidations
             //'confirmarclave.required' => 'Debe confirmar la clave',
             //'confirmarclave.same' => 'Las claves no coinciden',
             //'confirmarclave.min' => 'La clave debe tener un minimo de 6 caracteres',
-            'consorcio.required' => 'Debe seleccionar un consorcio',
+            'unidad.required' => 'Debe indicar un consorcio',
         );
-        
+
         $rules = [];
         $rules['nombre']        = 'required|max:60';
         $rules['email']         = 'required|email|max:255|unique:users';
         $rules['clave']         = 'required|min:6';
-        //$rules['confirmarclave']= 'required|same:clave|min:6|max:20';
-        $rules['consorcio']     = 'required';
+        $rules['unidad']        = 'required|array|min:1';
 
         $validator = Validator::make($data, $rules, $messages);
         return $validator;

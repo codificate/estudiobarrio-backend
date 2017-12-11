@@ -11,8 +11,10 @@ namespace App\Services;
 
 use App\Models\Consorcios;
 use App\Models\Copropietarios;
+use App\Models\Tiposcopropietario;
 use App\Models\Pagos;
 use App\Models\Reclamos;
+use App\Models\Unidad;
 use App\Models\Rol;
 use App\Transformers\UserTransformer;
 use App\User;
@@ -27,8 +29,8 @@ class UserService
         if ( $copropietario instanceof  Copropietarios && $copropietario != null)
         {
 
-            try
-            {
+            /* try
+            { */
                 $token = $usuario->createToken('Llegate')->accessToken;
 
                 $usuario->access_token = "Bearer " . $token;
@@ -40,22 +42,26 @@ class UserService
 
                 if ( strcasecmp( $rol->nombre, 'admin') != 0 ) {
 
+                    $tipocopropietario = Tiposcopropietario::all()->where( 'id', $copropietario->tipocopropietario )->first();
+
+                    $copropietario->tipocopropietario = $tipocopropietario->nombre;
+
                     $reclamos = Reclamos::ByCopropietario( $copropietario->id );
 
                     $pagos = Pagos::ByCopropietario( $copropietario->id );
 
-                    $consorcio = Consorcios::all()->where( 'id', '=', $copropietario->id_consorcio )->first();
+                    $unidades = Unidad::Detail( $copropietario->id );
 
-                    return UserTransformer::detallecopropietario( $usuario, $copropietario, $consorcio, $reclamos, $pagos );
+                    return UserTransformer::detallecopropietario( $usuario, $copropietario, $unidades, $reclamos, $pagos );
 
                 } else
                     return UserTransformer::detallecopropietario( $usuario, $copropietario, null, null, null );
 
-            }
+            /* }
             catch (\Exception $e)
             {
                 return [ 'error' => $e->getMessage() ];
-            }
+            } */
         }
     }
 
@@ -117,7 +123,7 @@ class UserService
                 $user->access_token = "Bearer " . $token;
 
                 $rol = Rol::all()->where('id', $user->id_rol)->first();
-                
+
                 if ( $rol instanceof Rol )
                     $user->id_rol = $rol->nombre;
 
@@ -129,25 +135,18 @@ class UserService
             }
         }
     }
-    
+
     public function register( $data )
     {
         $token = null;
-        //$nuevousuario = new User();
 
         $input['uuid'] = '';
         $input['id_rol'] = 2;
-        $input['name'] = $data['nombre'];
+        $input['name'] = $data['nombre'] . ' ' . $data['apellido'];
         $input['email'] = $data['email'];
         $input['password'] = bcrypt( $data[ 'clave' ] );
 
         $nuevousuario = User::create( $input );
-
-        /*$nuevousuario->uuid = '';
-        $nuevousuario->id_rol = 2;
-        $nuevousuario->name = $data['nombre'];
-        $nuevousuario->email = $data['email'];
-        $nuevousuario->password = bcrypt( $data[ 'clave' ] );*/
 
         if ( $nuevousuario != null )
         {
@@ -157,24 +156,18 @@ class UserService
 
             $usuario->access_token = "Bearer " . $token;
 
-            try
-            {
+            //try
+            //{
 
-                $consorcio =  Consorcios::all()->where( 'uuid', $data['consorcio'] )->first();
+                $tiposcopropietario = Tiposcopropietario::all()->where( 'nombre', $data['tipocopropietario'] )->first();
 
                 $copropietario = new Copropietarios();
 
-                if ( $consorcio instanceof Consorcios and $consorcio != null)
-                    $copropietario->id_consorcio = $consorcio->id;
-                else
-                    return [ 'error' => 'Parece que no existe el consorcio indicado' ];
-
-                $copropietario->uuid = '';
                 $copropietario->UF = '';
-                $copropietario->piso = $data['piso'];
-                $copropietario->departamento = $data['departamento'];
-                $copropietario->telefono = $data['telefono'];
+                $copropietario->uuid = '';
                 $copropietario->id_user = $usuario->id;
+                $copropietario->telefono = $data['telefono'];
+                $copropietario->tipocopropietario = $tiposcopropietario->id;
 
                 if ($copropietario->save())
                 {
@@ -184,21 +177,55 @@ class UserService
                     if ( $rol instanceof Rol )
                         $usuario->id_rol = $rol->nombre;
 
-                    return UserTransformer::detallecopropietario($usuario, $inquilino, $consorcio, null, null);
+                    if ( is_array( $data['unidad'] ) ) {
+
+                        $unidades = [];
+
+                        foreach ( $data['unidad'] as $key => $unidad ) {
+
+                            $nuevaunidad = new Unidad();
+                            $nuevaunidad->uuid = '';
+                            $nuevaunidad->piso = $unidad[ 'piso' ];
+                            $nuevaunidad->departamento = $unidad[ 'departamento' ];
+                            $consorcio = Consorcios::all()->where( 'uuid', $unidad['consorcio'] )->first();
+                            $nuevaunidad->id_consorcio = $consorcio->id;
+                            $nuevaunidad->id_copropietario = $copropietario->id;
+
+                            if ( $nuevaunidad->save() ) {
+
+                              $unidadcreada = Unidad::all()->where( 'id', $nuevaunidad->id )->first();
+                              $unidadcreada->id = $unidadcreada->uuid;
+                              $unidadcreada->consorcio = $consorcio->nombre;
+                              $unidadcreada->id_consorcio = $unidad['consorcio'];
+                              unset( $unidadcreada->id );
+                              unset( $unidadcreada->id_consorcio );
+                              unset( $unidadcreada->id_copropietario );
+                              unset( $unidadcreada->updated_at );
+                              unset( $unidadcreada->created_at );
+
+                              array_push( $unidades, $unidadcreada );
+
+                            }
+
+                        }
+
+                    }
+
+                    return UserTransformer::nuevocopropietario( $usuario, $inquilino, $unidades, $tiposcopropietario );
                 }
 
-            }
+            /*}
             catch ( \Exception $e)
             {
 
                 return [ 'error' => $e->getMessage() ];
 
-            }
+            } */
         }
 
         return [ 'error' => "Ha ocurrido un error" ];
     }
-    
+
     public function createUserFromCopropietarioEmail( $data )
     {
         $token = null;
@@ -210,9 +237,9 @@ class UserService
 
             if ( $copropietario->id_user == null )
             {
-            
+
             	$usuario = User::all()->where( 'email', $data['email'] )->first();
-            	
+
             	if( $usuario instanceof User && $usuario != null )
             	{
             		$copropietario->id_user = $usuario->id;
@@ -226,7 +253,7 @@ class UserService
                 	$input['email'] = $data['email'];
                 	$input['password'] = bcrypt( $data[ 'clave' ] );
 
-                	$nuevousuario = User::create( $input );		
+                	$nuevousuario = User::create( $input );
 
                 	try
                 	{

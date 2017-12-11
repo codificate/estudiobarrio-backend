@@ -76,7 +76,7 @@ class ConfigController extends Controller
     {
 
         $general = new General();
-        
+
         $estados = EstadoPagoTransformer::transformCollection( Estadopagos::all( [ 'uuid', 'valor' ] ) );
 
         if ( !$estados )

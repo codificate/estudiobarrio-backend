@@ -136,7 +136,7 @@
             <!-- Bread crumb and right sidebar toggle -->
             <!-- ============================================================== -->
             <div class="row page-titles">
-                <div class="col-md-4 col-4 align-self-center">
+                <div class="col-md-12 align-self-center">
                     <h3 class="text-themecolor m-b-0 m-t-0">Pagos</h3>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="javascript:void(0)">Inicio</a></li>
@@ -144,8 +144,8 @@
                         <li class="breadcrumb-item" ng-show="vm.consorciowasselected">{{vm.consorcioselected}} <img src="assets/images/close.svg" ng-click="vm.removeCriteria(vm.consorcioselected )" style="display: inline-block;" ></li>
                         <li class="breadcrumb-item" ng-show="vm.copropietariowasselected">{{vm.copropietarioselected}} <img src="assets/images/close.svg" ng-click="vm.removeCriteria(vm.copropietarioselected )" style="display: inline-block;" ></li>
                         <li class="breadcrumb-item" ng-show="vm.bancowasselected">{{vm.bancoselected}} <img src="assets/images/close.svg" ng-click="vm.removeCriteria(vm.bancoselected )" style="display: inline-block;" ></li>
-                        <li class="breadcrumb-item" ng-show="vm.tipowasselected">{{vm.tiposelected}} <img src="assets/images/close.svg" ng-click="vm.removeCriteria(vm.tiposelected )" style="display: inline-block;" ></li>
-                        <li class="breadcrumb-item" ng-show="vm.estadowasselected">{{vm.estadoselected}} <img src="assets/images/close.svg" ng-click="vm.removeCriteria(vm.estadoselected )" style="display: inline-block;" > </li>
+                        <li class="breadcrumb-item" ng-show="vm.estadowasselected">{{vm.estadoselected}} <img src="assets/images/close.svg" ng-click="vm.removeCriteria(vm.estadoselected )" style="display: inline-block;" ></li>
+                        <li class="breadcrumb-item" ng-show="vm.movimientowasselected">{{vm.movimientoselected}} <img src="assets/images/close.svg" ng-click="vm.removeCriteria(vm.movimientoselected )" style="display: inline-block;" > </li>
                     </ol>
                 </div>
             </div>
@@ -227,49 +227,47 @@
                     <div class="card">
                         <div class="card-block">
                             <div class="table-responsive m-t-40">
-                                <table id="tablereclamoslist" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
-                                    <thead>
-                                        <tr>
-                                            <th>Fecha</th>
-                                            <th>Copropietario</th>
-                                            <th>Banco</th>
-                                            <th>Comentario</th>
-                                            <th>Estado</th>
-                                            <th>Monto</th>
-                                            <th>Movimiento</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr ng-repeat="x in vm.pagos">
-                                            <td><div ng-click="vm.modalDetallePago(x)">{{x.fecha}}</div></td>
-                                            <td>{{x.nombre}}</td>
-                                            <td>{{x.banco}}</td>
-                                            <td>{{x.comentario}}</td>
-                                            <td>{{x.estado}}</td>
-                                            <td>{{x.monto}}</td>
-                                            <td>{{x.movimiento}}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
 
-                                <!-- pager -->
-                                <ul ng-if="vm.pager.pages.length" class="pagination">
-                                    <li ng-class="{disabled:vm.pager.currentPage === 1}">
-                                        <a ng-click="vm.setPage(1)">First</a>
-                                    </li>
-                                    <li ng-class="{disabled:vm.pager.currentPage === 1}">
-                                        <a ng-click="vm.setPage(vm.pager.currentPage - 1)">Previous</a>
-                                    </li>
-                                    <li ng-repeat="page in vm.pager.pages" ng-class="{active:vm.pager.currentPage === page}">
-                                        <a ng-click="vm.setPage(page)">{{page}}</a>
-                                    </li>
-                                    <li ng-class="{disabled:vm.pager.currentPage === vm.pager.totalPages}">
-                                        <a ng-click="vm.setPage(vm.pager.currentPage + 1)">Next</a>
-                                    </li>
-                                    <li ng-class="{disabled:vm.pager.currentPage === vm.pager.totalPages}">
-                                        <a ng-click="vm.setPage(vm.pager.totalPages)">Last</a>
-                                    </li>
-                                </ul>
+                                <table ng-table="vm.tableParams" class="table table-condensed table-bordered table-striped">
+                                  <tr ng-repeat="x in $data" >
+                                      <td data-title="'Id'">{{x.id}}</td>
+                                      <td data-title="'Fecha'" sortable="'fecha'">
+                                        <div class="detail" ng-click="vm.modalDetallePago(x)">
+                                          <img class="detailicon" src="assets/images/eye.svg">
+                                          <p>{{x.fecha}}</p>
+                                        </div>
+                                      </td>
+                                      <td data-title="'Copropietario'" >{{x.nombre}}</td>
+                                      <td data-title="'Banco'" sortable="'banco'">{{x.banco}}</td>
+                                      <td data-title="'Comentario'">{{x.comentario}}</td>
+                                      <td data-title="'Estado'" sortable="'estado'">
+
+                                        <div class="dropdown hidden-sm-down">
+                                            <button
+                                              class="btn btn-secondary dropdown-toggle"
+                                              type="button" id="dropdownChangeEstadoPagoButton"
+                                              data-toggle="dropdown"
+                                              aria-haspopup="true"
+                                              aria-expanded="false">
+                                              {{x.estado}}
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+
+                                                <div ng-repeat="estadopago in vm.estadopagos" >
+
+                                                    <a class="dropdown-item" ng-click="vm.changeEstadoPago( x.id, estadopago.id )" ng-show="estadopago.nombre != null">{{ estadopago.nombre }}</a>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                      </td>
+                                      <td data-title="'Monto'" sortable="'monto'">{{x.monto}}</td>
+                                      <td data-title="'Movimiento'" sortable="'movimiento'">{{x.movimiento}}</td>
+
+                                  </tr>
+                                </table>
 
                             </div>
                         </div>

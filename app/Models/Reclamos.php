@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Reclamos extends Model
 {
-    
+
 
     /**
      * The attributes that are mass assignable.
@@ -69,17 +69,8 @@ class Reclamos extends Model
         $this->attributes['uuid'] = Uuid::generate(4);
     }
 
-    public function scopeByCopropietario($query, $copropietario)
+    public function addPhotosToReclamos( $query, $cutid )
     {
-        $resutl = null;
-
-        $query = 
-            "select re.id, re.uuid, DATE( re.fecha ) fecha, tr.reclamo tipo, ".
-            "er.valor estado, re.infoAdicional descripcion ".
-            "from reclamos re, copropietarios co, tipos_reclamo tr, estadoreclamos er ".
-            "where re.id_copropietario = co.id and co.id = " . $copropietario . " and re.tipo_reclamo = tr.id ".
-            "and re.estado = er.id order by re.fecha desc";
-
         $reclamos = [];
 
         try
@@ -96,9 +87,18 @@ class Reclamos extends Model
                         $reclamo->fotos = array( $fotosreclamo->principal, $fotosreclamo->secundaria );
                     }
 
-                    $reclamo->id = $reclamo->uuid;
+                    if ( $cutid == false )
+                    {
+                        $reclamo->id = $reclamo->uuid;
+                        unset( $reclamo->uuid );
+                    }
+                    else
+                    {
+                        $explodeuuid = explode('-', $reclamo->uuid);
 
-                    unset( $reclamo->uuid );
+                        $reclamo->id = substr( $explodeuuid[0], 2, strlen($explodeuuid[0]));
+                    }
+
                     array_push( $reclamos, $reclamo );
                 }
             }
@@ -109,60 +109,61 @@ class Reclamos extends Model
         }
 
         return $reclamos;
+
+    }
+
+    public function scopeByCopropietario($query, $copropietario)
+    {
+        $resutl = null;
+
+        $query =
+            "select re.id, re.uuid, DATE( re.fecha ) fecha, tr.reclamo tipo, ".
+            "er.valor estado, con.nombre consorcio, re.infoAdicional descripcion ".
+            "from reclamos re, copropietarios co, consorcios con, tipos_reclamo tr, estadoreclamos er ".
+            "where re.id_copropietario = co.id and co.id = " . $copropietario . " and re.tipo_reclamo = tr.id ".
+            "and re.estado = er.id and re.id_consorcio = con.id order by re.fecha desc";
+
+        $reclamos = $this->addPhotosToReclamos( $query, false );
+
+        return $reclamos;
     }
 
     public function scopeById($query, $id)
     {
         $resutl = null;
 
-        $query = "select re.uuid id, DATE( re.fecha ) fecha, con.nombre, tr.reclamo tipo, er.valor estado, ".
+        $query = "select re.id, re.uuid, DATE( re.fecha ) fecha, con.nombre, tr.reclamo tipo, er.valor estado, ".
             "re.infoAdicional descripcion from ".
             "reclamos re, consorcios con, copropietarios co, tipos_reclamo tr, estadoreclamos er where ".
             "re.id_copropietario = co.id and re.id = " . $id. " and re.tipo_reclamo = tr.id and ".
             "re.id_consorcio = con.id and re.estado = er.id";
 
-        try
-        {
+        $reclamos = $this->addPhotosToReclamos( $query, false );
 
-            $result = DB::select(DB::raw($query));
-
-        }catch (\Exception $e)
-        {
-            $result = $e->getMessage();
-        }
-
-        return $result;
+        return $reclamos;
     }
 
     public function scopeByConsorcio($query, $id)
     {
         $result = null;
 
-        $query = " select re.uuid id, DATE( re.fecha ) fecha, co.nombre, co.email, co.telefono, tr.reclamo tipo, er.valor estado,".
+        $query = " select re.id, re.uuid, DATE( re.fecha ) fecha, co.nombre, co.email, co.telefono, tr.reclamo tipo, er.valor estado,".
             " re.infoAdicional descripcion from reclamos re ".
             " left join copropietarios co on re.id_copropietario = co.id " .
             " left join tipos_reclamo tr on re.tipo_reclamo = tr.id ".
             " left join estadoreclamos er on re.estado = er.id " .
             " where co.id_consorcio = " . $id . " and re.id_consorcio = " . $id . " order by re.fecha desc ";
 
-        try
-        {
+        $reclamos = $this->addPhotosToReclamos( $query, true );
 
-            $result = DB::select(DB::raw($query));
-
-        }catch (\Exception $e)
-        {
-            $result = $e->getMessage();
-        }
-
-        return $result;
+        return $reclamos;
     }
 
     public function scopeCreatedAtLastMonth($query)
     {
         $result = null;
 
-        $query = " select re.uuid id, DATE( re.fecha ) fecha, co.nombre, co.email, co.telefono, tr.reclamo tipo, er.valor estado,".
+        $query = " select re.id, re.uuid, DATE( re.fecha ) fecha, co.nombre, co.email, co.telefono, tr.reclamo tipo, er.valor estado,".
             " re.infoAdicional descripcion from reclamos re ".
             " left join copropietarios co on re.id_copropietario = co.id " .
             " left join tipos_reclamo tr on re.tipo_reclamo = tr.id ".
@@ -170,17 +171,9 @@ class Reclamos extends Model
             " where DATE( re.fecha ) BETWEEN CONCAT( YEAR( CURRENT_DATE ), CONCAT( '-', CONCAT( MONTH( CURRENT_DATE ) - 3 , CONCAT( '-', DAY(CURRENT_DATE()) ) ) ) ) AND CURRENT_DATE()".
             " order by re.fecha desc ";
 
-        try
-        {
+        $reclamos = $this->addPhotosToReclamos( $query, true );
 
-            $result = DB::select(DB::raw($query));
-
-        }catch (\Exception $e)
-        {
-            $result = $e->getMessage();
-        }
-
-        return $result;
+        return $reclamos;
     }
 
 }

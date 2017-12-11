@@ -2,7 +2,18 @@
     'use strict';
 
     angular
-        .module('app', ['ngAnimate', 'ngTouch', 'ngSanitize', 'ui.router', 'ngDialog', 'ngMessages', 'ngStorage'])
+        .module('app', [
+          'ngAnimate',
+          'ngTouch',
+          'ngSanitize',
+          'ui.router',
+          'ngDialog',
+          'ngMessages',
+          'ngStorage',
+          'ngMaterial',
+          'jkAngularCarousel',
+          'ngTable',
+          'oitozero.ngSweetAlert'])
         .config(config)
         .run(run);
 

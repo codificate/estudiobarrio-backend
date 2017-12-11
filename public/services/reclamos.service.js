@@ -17,6 +17,7 @@
         service.TiposReclamo = TiposReclamo;
         service.EstadosReclamo = EstadosReclamo;
         service.ByCopropietario = ByCopropietario;
+        service.ChangeEstadoReclamo = ChangeEstadoReclamo;
         service.CopropietariosByConsorcio = CopropietariosByConsorcio;
 
         return service;
@@ -64,6 +65,7 @@
                 },
 
                 function errorCallback(response){
+                    console.log(response.data);
                     callback(response);
                 }
             );
@@ -88,6 +90,31 @@
                 },
 
                 function errorCallback(response){
+                    callback(response);
+                }
+            );
+        }
+
+        function ChangeEstadoReclamo( reclamoid, estadoid, callback ){
+
+            var req = {
+                method: 'PUT',
+                url: service.domain + 'api/reclamo/changeEstado/' + reclamoid + '/' + estadoid,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': $localStorage.currentUser.token
+                }
+            };
+
+            $http(req).then(
+
+                function successCallback(response){
+                    callback(response.data);
+                },
+
+                function errorCallback(response){
+                    console.log(response);
                     callback(response);
                 }
             );
@@ -191,6 +218,7 @@
                     callback(response);
                 },
                 function errorCallback(response){
+                    console.log(response.data);
                     callback(response);
                 }
             );

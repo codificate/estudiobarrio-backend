@@ -18,7 +18,7 @@ class ReclamosValidation
     {
         $rules = [];
         $rules['copropietario'] = 'required';
-        $rules['consorcio']     = 'required';
+        $rules['unidad']        = 'required';
         $rules['tipo']          = 'required';
 
         $validator = Validator::make($data, $rules);
