@@ -8,6 +8,7 @@
 
 namespace App\Services;
 
+use App\User;
 use App\Models\Pagos;
 use App\Models\Unidad;
 use App\Models\Bancos;
@@ -80,6 +81,13 @@ class PagosService
         $banco = Bancos::all()->where( 'id', $pago->id_banco )->first();
         $copropietario = Copropietarios::all()->where( 'id', $pago->id_copropietario )->first();
 
+        if ( ( $copropietario->email == '' || $copropietario->email == null ) && $copropietario->id_user != null )
+        {
+            $usuario = User::all()->where( 'id', '=', $copropietario->id_user )->first();
+            $copropietario->nombre = $usuario->name;
+            $copropietario->email = $usuario->email;
+        }
+
         $pago->estado = $estadopago->id;
 
         try
@@ -90,16 +98,20 @@ class PagosService
 
               $response = new \stdClass;
 
+              $explodeuuid = explode('-', $pago->uuid);
+              $response->id = substr( $explodeuuid[0], 2, strlen($explodeuuid[0]));
+              $response->uuid = $pago->uuid;
               $response->banco = $banco->banco;
               $response->comentario = $pago->comentario;
               $response->estado = $estadopago->valor;
               $response->fecha = $pago->fecha;
-              $response->id = $pago->uuid;
               $response->id_banco = $banco->uuid;
               $response->id_movimiento = $tipo->uuid;
               $response->monto = $pago->monto;
+              $response->tipo = $tipo->movimiento;
               $response->movimiento = $tipo->movimiento;
               $response->nombre = $copropietario->nombre;
+              $response->email = $copropietario->email;
 
               return $response;
           }

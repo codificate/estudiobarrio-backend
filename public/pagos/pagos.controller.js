@@ -169,7 +169,7 @@
 
         }
 
-        function changeEstadoPago( pagoid, estadoid ){
+        function changeEstadoPago( codigopago, pagoid, estadoid ){
 
           var response;
           var iterador = 0;
@@ -177,7 +177,7 @@
 
           SweetAlert.swal({
             title: "¿Estás seguro?",
-            text: "Cambiarás el estado del pago!",
+            text: "Cambiarás el estado del pago, código: " + codigopago,
             type: "warning",
             showCancelButton: true,
             confirmButtonColor: "#DD6B55",
@@ -198,7 +198,7 @@
 
                           if ( !isEmpty(tmp) ) {
 
-                            if (  tmp.id == result.id  ) {
+                            if (  tmp.uuid == result.uuid  ) {
 
                               posicion = iterador;
 

@@ -124,7 +124,7 @@ class CopropietariosController extends Controller
             return $general->responseErrorAPI( $response, 500 );
         }
     }
-    
+
     public function signUp (Request $request)
     {
         $data = $request->all();
@@ -150,7 +150,7 @@ class CopropietariosController extends Controller
             }
         }
     }
-    
+
     public function forgotPassword(Request $request)
     {
         $data = $request->all();
@@ -164,7 +164,7 @@ class CopropietariosController extends Controller
         }
         else
         {
-            $response = $service->createUserFromCopropietarioEmail( $data );
+            $response = $service->changePassword( $data );
 
             if ( !is_array( $response ) )
             {
@@ -228,46 +228,65 @@ class CopropietariosController extends Controller
 
                 if( $copropietario->save() )
                 {
-                
+
                	    $usuario = User::all()->where('id', $copropietario->id_user)->first();
-               	    
+
                	    $usuario->name = $copropietario->nombre;
                	    $usuario->email = $copropietario->email;
-               	    
+
                	    try
                	    {
-               	    
+
                	    	if ( $usuario->save() )
 	               	{
-	               	    
+
 	               		$reclamosbycopropietario = Reclamos::ByCopropietario( $copropietario->id );
-	                    
+
 	                    	$pagos = Pagos::ByCopropietario( $copropietario->id );
-	
+
 	                    	$consorcio = Consorcios::all()->where( 'id', '=', $copropietario->id_consorcio )->first();
-	
-	                    	return $general->responseSuccessAPI( 
-	                    		UserTransformer::detallecopropietario( 
-	                    			$usuario, 
-	                    			$copropietario, 
-	                    			$consorcio, 
-	                    			$reclamosbycopropietario, 
-	                    			$pagos 
-	                    		) 
+
+	                    	return $general->responseSuccessAPI(
+	                    		UserTransformer::detallecopropietario(
+	                    			$usuario,
+	                    			$copropietario,
+	                    			$consorcio,
+	                    			$reclamosbycopropietario,
+	                    			$pagos
+	                    		)
 	                    	);
-	               	    
+
 	               	}
-               	    
+
                	    } catch ( \Exception $e )
                	    {
                	    	return $general->responseErrorAPI( $e->getMessage(), 500 );
-               	    }	       	    
+               	    }
                 }
-                
+
             } catch ( \Exception $e )
             {
                 return $general->responseErrorAPI( $e->getMessage(), 500 );
             }
         }
+    }
+
+    public function checkIfExistByEmail(Request $request)
+    {
+        $data = $request->all();
+        $general = new General();
+        $service = new UserService();
+
+        $ifExist = $service->checkIfCopropietarioExistFromEmail( $data['correo'] );
+
+        if ( $ifExist->exist )
+        {
+            return $general->responseSuccessAPI( $ifExist );
+        }
+        else
+        {
+            return $general->responseErrorAPI( $ifExist, 514 );
+        }
+
     }
 }

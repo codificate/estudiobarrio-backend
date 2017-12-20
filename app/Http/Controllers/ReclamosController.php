@@ -8,10 +8,12 @@
 
 namespace App\Http\Controllers;
 
+use ElCarteroController;
 use App\Services\ReclamosService;
 use App\Utils\General;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Mail;
 use App\Validations\ReclamosValidation;
 
 class ReclamosController extends Controller
@@ -119,11 +121,30 @@ class ReclamosController extends Controller
 
         if ( !is_array( $change ) )
         {
+            $this->cambiarEstadoReclamo( $change );
             return $general->responseSuccessAPI( $change );
         }
         else
         {
             return $general->responseErrorAPI( "Algo ha salido mal", 500 );
+        }
+    }
+
+    public function cambiarEstadoReclamo( $reclamo )
+    {
+        if ( $reclamo->email != '' )
+        {
+            $email = $reclamo->email;
+            Mail::send( 'emails.cambiarestadoreclamo',
+              [ 'nombre'  => $reclamo->nombre,
+                'estado'  => $reclamo->estado,
+                'tipo'    => $reclamo->tipo,
+                'descripcion' => $reclamo->descripcion ], function ($message) use ($email)
+                {
+                    $message->from('andres92898@gmail.com', 'Estudio Barrio');
+                    $message->to( $email );
+                    $message->subject("Cambio del estado del reclamo");
+                });
         }
     }
 

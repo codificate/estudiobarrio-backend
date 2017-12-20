@@ -175,6 +175,13 @@ class ReclamosService
         $fotos = FotosReclamos::all()->where( 'id_reclamo', $reclamo->id )->first();
         $copropietario = Copropietarios::all()->where( 'id', '=', $reclamo->id_copropietario )->first();
 
+        if ( $copropietario->email == '' || $copropietario->email == null )
+        {
+            $usuario = User::all()->where( 'id', '=', $copropietario->id_user )->first();
+            $copropietario->nombre = $usuario->nombre;
+            $copropietario->email = $usuario->email;
+        }
+
         $reclamo->estado = $estadoreclamo->id;
 
         try
@@ -194,7 +201,6 @@ class ReclamosService
               $response->nombre = $copropietario->nombre;
               $response->telefono = $copropietario->telefono;
               $response->email = $copropietario->email;
-              $response->telefono = $copropietario->telefono;
               $response->tipo = $tipo->reclamo;
               $response->descripcion = $reclamo->infoAdicional;
               $response->fecha = date_format( date_create( $reclamo->fecha ), 'Y-m-d' );

@@ -230,7 +230,7 @@
 
                                 <table ng-table="vm.tableParams" class="table table-condensed table-bordered table-striped">
                                   <tr ng-repeat="x in $data" >
-                                      <td data-title="'Id'">{{x.id}}</td>
+                                      <td data-title="'Id'" filter="{id: 'text'}">{{x.id}}</td>
                                       <td data-title="'Fecha'" sortable="'fecha'">
                                         <div class="detail" ng-click="vm.modalDetallePago(x)">
                                           <img class="detailicon" src="assets/images/eye.svg">
@@ -255,7 +255,7 @@
 
                                                 <div ng-repeat="estadopago in vm.estadopagos" >
 
-                                                    <a class="dropdown-item" ng-click="vm.changeEstadoPago( x.id, estadopago.id )" ng-show="estadopago.nombre != null">{{ estadopago.nombre }}</a>
+                                                    <a class="dropdown-item" ng-click="vm.changeEstadoPago( x.id, x.uuid, estadopago.id )" ng-show="estadopago.nombre != null">{{ estadopago.nombre }}</a>
 
                                                 </div>
 
@@ -362,6 +362,13 @@
             <li>Monto : {{pago.monto}}</li>
             <li>Movimiento : {{pago.movimiento}}</li>
             <li>Comentario : {{pago.comentario}}</li>
+            <li ng-hide="pago.adjunto == null" >
+              <img src="assets/images/download.svg">
+              Adjunto :
+              <a href="http://estudiobarrio.plexarg.com/public/comprobantes/{{pago.adjunto}}" target="_blank">
+              {{pago.adjunto}}
+              </a>
+            </li>
         </ul>
     </div>
 </script>

@@ -8,8 +8,8 @@
     function Service($http, $localStorage) {
         var service = {};
 
-        service.domain = 'http://localhost:8000/';
-        //service.domain = 'http://estudiobarrio.plexarg.com/';
+        //service.domain = 'http://localhost:8000/';
+        service.domain = 'http://estudiobarrio.plexarg.com/';
 
         service.Bancos = Bancos;
         service.Movimientos = Movimientos;
@@ -63,11 +63,9 @@
             $http(req)
                 .then(
                     function successCallback(response){
-                        console.log( response );
                         callback(response);
                     },
                     function errorCallback(response){
-                        console.log( response );
                         callback(response);
                 });
         }
@@ -87,11 +85,9 @@
             $http(req)
                 .then(
                     function successCallback(response){
-                        console.log( response );
                         callback(response);
                     },
                     function errorCallback(response){
-                        console.log( response );
                         callback(response);
                     });
         }
@@ -111,12 +107,10 @@
             $http(req)
                 .then(
                     function successCallback(response){
-                        console.log( response );
                         $localStorage.bancos = response.data;
                         callback(response);
                     },
                     function errorCallback(response){
-                        console.log( response );
                         callback(response);
                     });
         }
@@ -136,12 +130,10 @@
             $http(req)
                 .then(
                     function successCallback(response){
-                        console.log( response );
                         $localStorage.estadopagos = response.data;
                         callback(response);
                     },
                     function errorCallback(response){
-                        console.log( response );
                         callback(response);
                     });
         }
@@ -161,12 +153,10 @@
             $http(req)
                 .then(
                     function successCallback(response){
-                        console.log( response );
                         $localStorage.movimientos = response.data;
                         callback(response);
                     },
                     function errorCallback(response){
-                        console.log( response );
                         callback(response);
                     });
         }
@@ -186,11 +176,9 @@
             $http(req).then(
 
                 function successCallback(response){
-                    console.log( response );
                     callback(response);
                 },
                 function errorCallback(response){
-                    console.log( response );
                     callback(response);
                 }
             );
@@ -215,7 +203,6 @@
                 },
 
                 function errorCallback(response){
-                    console.log(response);
                     callback(response);
                 }
             );

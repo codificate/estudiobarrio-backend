@@ -51,6 +51,16 @@ class Pagos extends Model
         {
             foreach ( $raw as $pago )
             {
+                $adjunto = Adjuntos::all()->where('id_pago', $pago->id)->first();
+                if ( $adjunto instanceof Adjuntos )
+                {
+                    $pago->adjunto = $pago->uuid . '/' . $adjunto->nombre;
+                }
+                else
+                {
+                    $pago->adjunto = null;
+                }
+
                 $explodeuuid = explode('-', $pago->uuid);
                 $pago->id = substr( $explodeuuid[0], 2, strlen($explodeuuid[0]));
                 array_push( $pagos, $pago );
@@ -126,8 +136,8 @@ class Pagos extends Model
             "left join copropietarios co on p.id_copropietario = co.id " .
             "left join bancos b on p.id_banco = b.id ".
             "left join estadopagos ep on p.estado = ep.id ".
-            "where p.fecha BETWEEN CONCAT( YEAR( CURRENT_DATE ), CONCAT( '-', CONCAT( MONTH( CURRENT_DATE ) - 3 , CONCAT( '-', DAY(CURRENT_DATE()) ) ) ) ) AND CURRENT_DATE() ".
-            "order by p.fecha desc";
+            "where DATE( p.created_at ) BETWEEN CONCAT( YEAR( CURRENT_DATE ), CONCAT( '-', CONCAT( MONTH( CURRENT_DATE ) - 3 , CONCAT( '-', DAY(CURRENT_DATE()) ) ) ) ) AND CURRENT_DATE() ".
+            "order by p.created_at desc";
 
         try
         {

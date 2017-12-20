@@ -136,6 +136,20 @@ class UserService
         }
     }
 
+    public function detailUserByEmail( $email )
+    {
+        $user = User::all()->where( 'email', $email )->first();
+
+        if ( $user instanceof User && $user != null)
+        {
+            return UserTransformer::detalleusuario($user);
+        }
+        else
+        {
+          return [ 'error' => 'Parece que este usuario aun no existe' ];
+        }
+    }
+
     public function register( $data )
     {
         $token = null;
@@ -226,6 +240,58 @@ class UserService
         return [ 'error' => "Ha ocurrido un error" ];
     }
 
+    public function checkIfCopropietarioExistFromEmail( $correo )
+    {
+        $response = new \stdClass;
+        $response->exist = false;
+
+        $copropietario =  Copropietarios::all()->where( 'email', $correo )->first();
+
+        if ( $copropietario instanceof  Copropietarios && $copropietario != null)
+        {
+
+            $usuario = User::all()->where( 'email', $correo )->first();
+            if( $usuario instanceof User && $usuario != null )
+            {
+                $response->exist = true;
+                $response->id = $usuario->uuid;
+            }
+            else
+            {
+                $response->message = "Parece que no existe el usuario con este email.";
+            }
+        }
+        else
+        {
+            $response->message = "Parece que no existe el usuario con este email.";
+        }
+
+        return $response;
+
+    }
+
+    public function changePassword( $data )
+    {
+        $response = new \stdClass;
+
+        $usuario = User::all()->where( 'uuid', $data['usuario'] )->first();
+        if( $usuario instanceof User && $usuario != null )
+        {
+            $usuario->password = bcrypt( $data[ 'clave' ] );
+            $usuario->save();
+
+            $response->ok = true;
+            $response->message = "Ya puedes hacer uso de tu nueva clave";
+        }
+        else
+        {
+            $response->ok = false;
+            $response->message = "Parece que tu usuario no existe.";
+        }
+
+        return $response;
+    }
+
     public function createUserFromCopropietarioEmail( $data )
     {
         $token = null;
@@ -242,8 +308,7 @@ class UserService
 
             	if( $usuario instanceof User && $usuario != null )
             	{
-            		$copropietario->id_user = $usuario->id;
-                        $copropietario->save();
+                  $usuario->password = bcrypt( $data[ 'clave' ] );
             	}
             	else
             	{

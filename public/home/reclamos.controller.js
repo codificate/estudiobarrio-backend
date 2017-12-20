@@ -162,7 +162,7 @@
 
         }
 
-        function changeEstadoReclamo( reclamoid, estadoid ){
+        function changeEstadoReclamo( codigoreclamo, reclamoid, estadoid ){
 
           var response;
           var iterador = 0;
@@ -170,7 +170,7 @@
 
           SweetAlert.swal({
             title: "¿Estás seguro?",
-            text: "Cambiarás el estado del reclamo!",
+            text: "Cambiarás el estado del reclamo, código: " + codigoreclamo,
             type: "warning",
             showCancelButton: true,
             confirmButtonColor: "#DD6B55",
@@ -191,7 +191,7 @@
 
                           if ( !isEmpty(tmp) ) {
 
-                            if (  tmp.id == result.id  ) {
+                            if (  tmp.uuid == result.uuid  ) {
 
                               posicion = iterador;
 

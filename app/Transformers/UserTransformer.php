@@ -63,6 +63,18 @@ class UserTransformer
         return $response;
     }
 
+    public static function recuperarClave( $usuario )
+    {
+        $response = new \stdClass;
+
+        $response->nombre = $usuario->name;
+        $response->email = $usuario->email;
+
+        unset( $usuario );
+
+        return $response;
+    }
+
     public static function nuevocopropietario( $usuario, $copropietario, $unidades, $tiposcopropietario )
     {
         $response = new \stdClass;

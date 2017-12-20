@@ -14,3 +14,7 @@
 Route::get('/', function () {
     return view('index');
 });
+
+Route::get('/cambiarclave', function () {
+    return view('cambiarclave');
+});

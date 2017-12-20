@@ -168,8 +168,8 @@ class Reclamos extends Model
             " left join copropietarios co on re.id_copropietario = co.id " .
             " left join tipos_reclamo tr on re.tipo_reclamo = tr.id ".
             " left join estadoreclamos er on re.estado = er.id " .
-            " where DATE( re.fecha ) BETWEEN CONCAT( YEAR( CURRENT_DATE ), CONCAT( '-', CONCAT( MONTH( CURRENT_DATE ) - 3 , CONCAT( '-', DAY(CURRENT_DATE()) ) ) ) ) AND CURRENT_DATE()".
-            " order by re.fecha desc ";
+            " where DATE( re.created_at ) BETWEEN CONCAT( YEAR( CURRENT_DATE ), CONCAT( '-', CONCAT( MONTH( CURRENT_DATE ) - 3 , CONCAT( '-', DAY(CURRENT_DATE()) ) ) ) ) AND CURRENT_DATE()".
+            " order by re.created_at desc ";
 
         $reclamos = $this->addPhotosToReclamos( $query, true );
 

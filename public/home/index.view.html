@@ -217,7 +217,7 @@
 
                                 <table ng-table="vm.tableParams" class="table table-condensed table-bordered table-striped">
                                     <tr ng-repeat="x in $data" >
-                                        <td data-title="'Id'">{{x.id}}</td>
+                                        <td data-title="'Id'" filter="{id: 'text'}">{{x.id}}</td>
                                         <td data-title="'Fecha'" sortable="'fecha'">
                                             <div class="detail" ng-click="vm.modalDetalleReclamo(x)">
                                               <img class="detailicon" src="assets/images/eye.svg">
@@ -243,7 +243,7 @@
 
                                                       <div ng-repeat="estadoreclamo in vm.estadosreclamo" >
 
-                                                          <a class="dropdown-item" ng-click="vm.changeEstadoReclamo( x.id, estadoreclamo.id )" ng-show="estadoreclamo.nombre != null">{{ estadoreclamo.nombre }}</a>
+                                                          <a class="dropdown-item" ng-click="vm.changeEstadoReclamo( x.id, x.uuid, estadoreclamo.id )" ng-show="estadoreclamo.nombre != null">{{ estadoreclamo.nombre }}</a>
 
                                                       </div>
 

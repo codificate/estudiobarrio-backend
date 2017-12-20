@@ -1,0 +1,8 @@
+vendor/
+public/node_modules
+.env
+.htaccess
+.idea/estudiobarrio-backend.iml
+.idea/modules.xml
+.idea/vcs.xml
+.idea/workspace.xml

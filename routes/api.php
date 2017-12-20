@@ -17,7 +17,9 @@ Route::get('consorcios', 'ConfigController@consorcios');
 
 Route::post('login', ['as' => 'login', 'uses' => 'CopropietariosController@login'] );
 Route::post('copropietario', 'CopropietariosController@signUp');
+Route::get('copropietario/checkbyemail', 'CopropietariosController@checkIfExistByEmail');
 Route::post('recuperarclave', 'CopropietariosController@forgotPassword');
+Route::put('notificarcambioclave', 'ElCarteroController@recuperarClave');
 
 Route::post('reclamo/fotos', 'ReclamosController@savePhotos');
 Route::post('pago/adjunto', 'PagosController@saveComprobante');

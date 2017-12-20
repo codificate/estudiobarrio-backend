@@ -8,9 +8,11 @@
 
 namespace App\Http\Controllers;
 
+use ElCarteroController;
 use App\Models\Pagos;
 use App\Services\PagosService;
 use App\Utils\General;
+use Illuminate\Support\Facades\Mail;
 use App\Validations\PagosValidation;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -98,11 +100,30 @@ class PagosController
 
         if ( !is_array( $change ) )
         {
+            $this->cambiarEstadoPago( $change );
             return $general->responseSuccessAPI( $change );
         }
         else
         {
             return $general->responseErrorAPI( "Algo ha salido mal", 500 );
+        }
+    }
+
+    public function cambiarEstadoPago( $pago )
+    {
+        if ( $pago->email != '' )
+        {
+            $email = $pago->email;
+            Mail::send( 'emails.cambiarestadopago',
+              [ 'nombre' => $pago->nombre,
+                'estado' => $pago->estado,
+                'tipo'    => $pago->tipo,
+                'descripcion' => $pago->comentario  ], function ($message) use ($email)
+                {
+                    $message->from('andres92898@gmail.com', 'Estudio Barrio');
+                    $message->to( $email );
+                    $message->subject("Cambio del estado de pago");
+                });
         }
     }
 
