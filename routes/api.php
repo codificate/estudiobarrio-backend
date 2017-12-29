@@ -48,6 +48,8 @@ Route::group([ 'middleware' => 'auth:api' ], function () {
     Route::get('pago/bycopropietario/{uuid}', 'PagosController@byCopropietario');
     Route::put('pago/changeEstado/{pagoid}/{estadoid}', 'PagosController@updateEstado');
 
+    Route::post('unidad', 'UnidadController@save');
+
     Route::get('user/{uuid}', 'UserController@detail');
 
 });
