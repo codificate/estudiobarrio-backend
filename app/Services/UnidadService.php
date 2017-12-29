@@ -53,7 +53,7 @@ class UnidadService
               unset( $unidadcreada->updated_at );
               unset( $unidadcreada->created_at );
 
-              array_push( $unidades, $unidadcreada );
+              return $unidadcreada;
 
             }
 

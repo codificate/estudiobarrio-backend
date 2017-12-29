@@ -11,7 +11,7 @@ namespace App\Http\Controllers;
 
 use App\Utils\General;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
+use App\Services\UnidadService;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class UnidadController extends Controller
@@ -21,6 +21,14 @@ class UnidadController extends Controller
     {
         $data = $request->all();
         $general = new General();
+        $service = new UnidadService();
+
+        $response = $service->add( $data );
+
+        if ( is_array( $response ) && array_key_exists( 'error', $response ) )
+            return $general->responseErrorAPI( $response );
+        else
+            return $general->responseSuccessAPI( $response );
     }
 
 }
