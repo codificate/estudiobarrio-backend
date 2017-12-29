@@ -36,7 +36,7 @@ class UnidadService
             $nuevaunidad->uuid = '';
             $nuevaunidad->piso = $data[ 'piso' ];
             $nuevaunidad->departamento = $data[ 'departamento' ];
-            $consorcio = Consorcios::all()->where( 'uuid', $unidad['consorcio'] )->first();
+            $consorcio = Consorcios::all()->where( 'uuid', $data['consorcio'] )->first();
             $nuevaunidad->id_consorcio = $consorcio->id;
             $nuevaunidad->id_copropietario = $copropietario->id;
 
@@ -45,7 +45,7 @@ class UnidadService
               $unidadcreada = Unidad::all()->where( 'id', $nuevaunidad->id )->first();
               $unidadcreada->id = $unidadcreada->uuid;
               $unidadcreada->consorcio = $consorcio->nombre;
-              $unidadcreada->id_consorcio = $unidad['consorcio'];
+              $unidadcreada->id_consorcio = $data['consorcio'];
               unset( $unidadcreada->id );
               unset( $unidadcreada->id_consorcio );
               unset( $unidadcreada->id_copropietario );
