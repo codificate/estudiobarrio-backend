@@ -136,8 +136,8 @@ class Pagos extends Model
             "left join copropietarios co on p.id_copropietario = co.id " .
             "left join bancos b on p.id_banco = b.id ".
             "left join estadopagos ep on p.estado = ep.id ".
-            "where DATE( p.created_at ) BETWEEN CONCAT( YEAR( CURRENT_DATE ), CONCAT( '-', CONCAT( MONTH( CURRENT_DATE ) - 3 , CONCAT( '-', DAY(CURRENT_DATE()) ) ) ) ) AND CURRENT_DATE() ".
-            "order by p.created_at desc";
+            "order by p.created_at desc ".
+            "limit 200";
 
         try
         {
